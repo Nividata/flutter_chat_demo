@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
+import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
 import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
 import 'package:rxdart/rxdart.dart';
@@ -12,6 +13,7 @@ import 'package:tuple/tuple.dart';
 class SignInViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
   SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
+  FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
@@ -26,8 +28,9 @@ class SignInViewModel extends BaseViewModel {
   String _verificationId = "";
 
   final BehaviorSubject _phoneNumberController =
-      BehaviorSubject<String>.seeded("9737563575");
-  final BehaviorSubject _otpController = BehaviorSubject<String>();
+      BehaviorSubject<String>.seeded("6354669944");
+  final BehaviorSubject _otpController =
+      BehaviorSubject<String>.seeded("123456");
 
   Function(String) get changePhoneNumber => _phoneNumberController.sink.add;
 
@@ -53,7 +56,12 @@ class SignInViewModel extends BaseViewModel {
   onOtpVerify(String otp) {
     _authenticationService.verifyOtp(_verificationId, otp).listen(
         (AuthResult authResult) {
-      _navigationService.replaceWith(Routes.chatView);
+          _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
+          _firebaseDbService.saveUser({"name": "test"}).listen((event) {
+            _navigationService.replaceWith(Routes.chatView);
+          }, onError: (e) {
+            print(e);
+          });
     }, onError: (e) {
       print(e);
     });
@@ -62,9 +70,12 @@ class SignInViewModel extends BaseViewModel {
   onAutoOtpVerify(AuthCredential credential) {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
-      print(authResult.user.uid);
       _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
-      _navigationService.replaceWith(Routes.chatView);
+      _firebaseDbService.saveUser({"name": "test13"}).listen((event) {
+        _navigationService.replaceWith(Routes.chatView);
+      }, onError: (e) {
+        print(e);
+      });
     }, onError: (e) {
       print(e);
     });

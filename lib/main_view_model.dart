@@ -5,7 +5,7 @@ import 'app/locator.dart';
 import 'services/shared_preferences_service.dart';
 
 class MainViewModel extends BaseViewModel {
-  bool _isLoggedIn = locator<SharedPreferencesService>()
+  bool _isLoggedIn = !locator<SharedPreferencesService>()
       .getString(PreferencesUtil.TOKEN)
       .isNotEmpty;
 
