@@ -19,7 +19,7 @@ class SignInView extends StatelessWidget {
             body: Container(
                 padding: EdgeInsets.only(left: 16, right: 16, top: 32),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
                     Expanded(
@@ -29,31 +29,34 @@ class SignInView extends StatelessWidget {
                           child: Column(
                             children: <Widget>[
                               TextFormField(
+                                  enabled: !model.codeSend,
                                   textInputAction: TextInputAction.next,
                                   decoration: InputDecoration(
                                       labelText: 'Phone number',
                                       hintText: "9737563575"),
                                   focusNode: _phoneNumberFocus,
                                   onFieldSubmitted: (term) {
-                                    _fieldFocusChange(context,
-                                        _phoneNumberFocus, _otpFocus);
+                                    _fieldFocusChange(
+                                        context, _phoneNumberFocus, _otpFocus);
                                   },
+                                  onChanged: model.changePhoneNumber,
                                   keyboardType: TextInputType.phone,
                                   validator: (String input) =>
                                       input.validNumber()),
                               SizedBox(
                                 height: 16,
                               ),
-                              TextFormField(
-                                  textInputAction: TextInputAction.done,
-                                  decoration: InputDecoration(
-                                      labelText: 'Otp', hintText: "123456"),
-                                  focusNode: _otpFocus,
-                                  keyboardType: TextInputType.number,
-                                  validator: (String input) =>
-                                      input.validOtp()),
-                              SizedBox(
-                                height: 16,
+                              Visibility(
+                                visible: model.codeSend,
+                                child: TextFormField(
+                                    textInputAction: TextInputAction.done,
+                                    decoration: InputDecoration(
+                                        labelText: 'Otp', hintText: "123456"),
+                                    focusNode: _otpFocus,
+                                    keyboardType: TextInputType.number,
+                                    onChanged: model.changeOtp,
+                                    validator: (String input) =>
+                                        input.validOtp()),
                               ),
                             ],
                           ),
@@ -63,13 +66,8 @@ class SignInView extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(top: 16, bottom: 32),
                       child: FlatButton(
-                        child: Text(
-                          "SIGN IN",
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              .copyWith(color: Colors.white),
-                        ),
+                        child: Text("SIGN IN",
+                            style: Theme.of(context).textTheme.subtitle1),
                         onPressed: model.onSignInClick,
                       ),
                     )
