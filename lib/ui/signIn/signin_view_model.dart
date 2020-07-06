@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
+import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
@@ -21,7 +22,8 @@ class SignInViewModel extends BaseViewModel {
 
   String _verificationId = "";
 
-  final BehaviorSubject _phoneNumberController = BehaviorSubject<String>.seeded("9737563575");
+  final BehaviorSubject _phoneNumberController =
+      BehaviorSubject<String>.seeded("9737563575");
   final BehaviorSubject _otpController = BehaviorSubject<String>();
 
   Function(String) get changePhoneNumber => _phoneNumberController.sink.add;
@@ -48,7 +50,7 @@ class SignInViewModel extends BaseViewModel {
   onOtpVerify(String otp) {
     _authenticationService.verifyOtp(_verificationId, otp).listen(
         (AuthResult authResult) {
-      print(authResult.user.phoneNumber);
+      _navigationService.replaceWith(Routes.chatView);
     }, onError: (e) {
       print(e);
     });
@@ -57,7 +59,7 @@ class SignInViewModel extends BaseViewModel {
   onAutoOtpVerify(AuthCredential credential) {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
-      print(authResult.user.phoneNumber);
+      _navigationService.replaceWith(Routes.chatView);
     }, onError: (e) {
       print(e);
     });

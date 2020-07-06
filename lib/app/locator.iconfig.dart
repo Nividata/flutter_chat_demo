@@ -23,10 +23,8 @@ Future<void> $initGetIt(GetIt g, {String environment}) {
 class _$ThirdPartyServicesModule extends ThirdPartyServicesModule {
   @override
   DialogService get dialogService => DialogService();
-
   @override
   NavigationService get navigationService => NavigationService();
-
   @override
   SnackbarService get snackbarService => SnackbarService();
 }
