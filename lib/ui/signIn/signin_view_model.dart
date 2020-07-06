@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
+import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
+import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -9,6 +11,7 @@ import 'package:tuple/tuple.dart';
 
 class SignInViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
+  SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
@@ -59,6 +62,8 @@ class SignInViewModel extends BaseViewModel {
   onAutoOtpVerify(AuthCredential credential) {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
+      print(authResult.user.uid);
+      _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
       _navigationService.replaceWith(Routes.chatView);
     }, onError: (e) {
       print(e);

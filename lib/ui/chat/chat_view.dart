@@ -165,17 +165,6 @@ class ChatView extends StatelessWidget {
     );
   }
 
-  Widget joinChatButton(BuildContext context, ChatViewModel model) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(27))),
-      onPressed: () {},
-      child: Text("Join Chat",
-          style:
-              Theme.of(context).textTheme.button.copyWith(color: Colors.white)),
-    );
-  }
-
   Widget sendMessage(BuildContext context, ChatViewModel model) {
     return Container(
       padding: EdgeInsets.all(8),

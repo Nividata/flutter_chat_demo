@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 @module
@@ -11,6 +12,9 @@ abstract class ThirdPartyServicesModule {
 
   @lazySingleton
   SnackbarService get snackbarService;
+
+  @preResolve
+  Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
 /*
   @preResolve
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();

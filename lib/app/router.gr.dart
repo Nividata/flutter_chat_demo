@@ -12,7 +12,7 @@ import 'package:flutter_chat_demo/ui/signIn/signin_view.dart';
 import 'package:flutter_chat_demo/ui/chat/chat_view.dart';
 
 class Routes {
-  static const String splashView = '/';
+  static const String splashView = '/splash-view';
   static const String signInView = '/sign-in-view';
   static const String chatView = '/chat-view';
   static const all = <String>{

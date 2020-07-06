@@ -5,7 +5,7 @@ import 'package:flutter_chat_demo/ui/splash/splash_view.dart';
 
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    MaterialRoute(page: SplashView, initial: true),
+    MaterialRoute(page: SplashView),
     MaterialRoute(page: SignInView),
     MaterialRoute(page: ChatView),
   ],
