@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:stacked_services/stacked_services.dart';
 
-void main() {
+import 'app/locator.dart';
+import 'app/router.gr.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
   runApp(MyApp());
 }
 
@@ -14,21 +20,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Chat Demo"),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'You have pushed the button this many times:',
-              ),
-            ],
-          ),
-        ),
-      ),
+      onGenerateRoute: Router(),
+      navigatorKey: locator<NavigationService>().navigatorKey,
     );
   }
 }
