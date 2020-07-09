@@ -1,4 +1,4 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
 
@@ -6,9 +6,12 @@ import 'package:injectable/injectable.dart';
 class FirebaseDbService {
   final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
 
-  Stream<void> saveUser(Map<String, dynamic> data) {
+  Stream<void> authenticate(Map<String, dynamic> data, AuthResult authResult) {
     print("ok im here");
-    return Stream.fromFuture(
-        _firebaseDatabase.reference().child("users").push().set(data));
+    return Stream.fromFuture(_firebaseDatabase
+        .reference()
+        .child("users")
+        .child(authResult.user.uid)
+        .update(data));
   }
 }

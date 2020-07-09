@@ -10,6 +10,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
+import 'package:flutter_chat_demo/user/usecases/UserRepositoryImpl.dart';
 import 'package:get_it/get_it.dart';
 
 Future<void> $initGetIt(GetIt g, {String environment}) async {
@@ -26,6 +27,8 @@ Future<void> $initGetIt(GetIt g, {String environment}) async {
       () => SharedPreferencesService(g<SharedPreferences>()));
   g.registerLazySingleton<SnackbarService>(
       () => thirdPartyServicesModule.snackbarService);
+  g.registerLazySingleton<UserRepositoryImpl>(
+      () => UserRepositoryImpl(g<FirebaseDbService>()));
 }
 
 class _$ThirdPartyServicesModule extends ThirdPartyServicesModule {

@@ -9,6 +9,8 @@ import 'package:tuple/tuple.dart';
 class AuthenticationService {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Future<FirebaseUser> currentUser() => _auth.currentUser();
+
   Stream<Tuple2<String, dynamic>> sendOtp(String phoneNumber) {
     StreamController controller = StreamController<Tuple2<String, dynamic>>();
 

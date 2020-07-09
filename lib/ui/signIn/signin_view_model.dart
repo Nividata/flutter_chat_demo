@@ -4,6 +4,8 @@ import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
+import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/user/usecases/UserRepositoryImpl.dart';
 import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
@@ -13,7 +15,7 @@ import 'package:tuple/tuple.dart';
 class SignInViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
   SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
-  FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
+  UserRepositoryImpl _userRepository = locator<UserRepositoryImpl>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
@@ -56,12 +58,14 @@ class SignInViewModel extends BaseViewModel {
   onOtpVerify(String otp) {
     _authenticationService.verifyOtp(_verificationId, otp).listen(
         (AuthResult authResult) {
-          _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
-          _firebaseDbService.saveUser({"name": "test"}).listen((event) {
-            _navigationService.replaceWith(Routes.chatView);
-          }, onError: (e) {
-            print(e);
-          });
+      _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
+      _userRepository
+          .authenticate(User(name: "mehul2", avatarUrl: "www.google.com"), authResult)
+          .listen((event) {
+        _navigationService.replaceWith(Routes.chatView);
+      }, onError: (e) {
+        print(e);
+      });
     }, onError: (e) {
       print(e);
     });
@@ -71,7 +75,9 @@ class SignInViewModel extends BaseViewModel {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
       _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
-      _firebaseDbService.saveUser({"name": "test13"}).listen((event) {
+      _userRepository
+          .authenticate(User(name: "mehul1", avatarUrl: "www.google.com"), authResult)
+          .listen((event) {
         _navigationService.replaceWith(Routes.chatView);
       }, onError: (e) {
         print(e);
