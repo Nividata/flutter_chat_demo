@@ -60,7 +60,7 @@ class SignInViewModel extends BaseViewModel {
         (AuthResult authResult) {
       _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
       _userRepository
-          .authenticate(User(name: "mehul2", avatarUrl: "www.google.com"), authResult)
+          .authenticate(User(name: "mehul2", avatarUrl: "www.google.com"))
           .listen((event) {
         _navigationService.replaceWith(Routes.chatView);
       }, onError: (e) {
@@ -76,7 +76,7 @@ class SignInViewModel extends BaseViewModel {
         (AuthResult authResult) {
       _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
       _userRepository
-          .authenticate(User(name: "mehul1", avatarUrl: "www.google.com"), authResult)
+          .authenticate(User(name: "mehul1", avatarUrl: "www.google.com"))
           .listen((event) {
         _navigationService.replaceWith(Routes.chatView);
       }, onError: (e) {

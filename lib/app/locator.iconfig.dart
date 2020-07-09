@@ -18,7 +18,8 @@ Future<void> $initGetIt(GetIt g, {String environment}) async {
   g.registerLazySingleton<AuthenticationService>(() => AuthenticationService());
   g.registerLazySingleton<DialogService>(
       () => thirdPartyServicesModule.dialogService);
-  g.registerLazySingleton<FirebaseDbService>(() => FirebaseDbService());
+  g.registerLazySingleton<FirebaseDbService>(
+      () => FirebaseDbService(g<AuthenticationService>()));
   g.registerLazySingleton<NavigationService>(
       () => thirdPartyServicesModule.navigationService);
   final sharedPreferences = await thirdPartyServicesModule.prefs;

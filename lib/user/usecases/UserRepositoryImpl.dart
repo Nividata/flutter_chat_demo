@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:flutter_chat_demo/user/usecases/IUserRepository.dart';
@@ -11,7 +10,7 @@ class UserRepositoryImpl implements IUserRepository {
   UserRepositoryImpl(this._firebaseDbService);
 
   @override
-  Stream<void> authenticate(User user,AuthResult authResult) {
-    return _firebaseDbService.authenticate(user.toJson(), authResult);
+  Stream<void> authenticate(User user) {
+    return _firebaseDbService.authenticate(user.toJson());
   }
 }

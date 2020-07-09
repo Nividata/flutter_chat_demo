@@ -1,22 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
+import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:tuple/tuple.dart';
 
 class ChatViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
+  FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
   final BehaviorSubject _sendMessageController = BehaviorSubject<String>();
 
   Function(String) get newMessage => _sendMessageController.sink.add;
 
-  ChatMessageViewModel() {
+  ChatViewModel() {
     getChatMessageList();
     getNewChatMessage();
   }
@@ -34,14 +35,21 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
+    /*_firebaseDbService.getMessage().listen((DataSnapshot snapshot) {
+      Map<dynamic, dynamic> values = snapshot.value;
+    }, onError: (e) {
+      print(e);
+    });*/
+    _firebaseDbService.createMessageThread().listen((String snapshot) {
+      print(snapshot);
+    }, onError: (e) {
+      print(e);
+    });
   }
 
-  getNewChatMessage() {
-  }
+  getNewChatMessage() {}
 
-  sendNewMessage() {
-
-  }
+  sendNewMessage() {}
 
   @override
   void dispose() {
