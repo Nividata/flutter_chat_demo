@@ -11,6 +11,7 @@ import 'package:flutter_chat_demo/ui/splash/splash_view.dart';
 import 'package:flutter_chat_demo/ui/signIn/signin_view.dart';
 import 'package:flutter_chat_demo/ui/currentChat/current_chat_view.dart';
 import 'package:flutter_chat_demo/ui/chat/chat_view.dart';
+import 'package:flutter_chat_demo/models/response/Threads.dart';
 
 class Routes {
   static const String splashView = '/splash-view';
@@ -56,10 +57,21 @@ class Router extends RouterBase {
       );
     },
     ChatView: (RouteData data) {
+      var args = data.getArgs<ChatViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
-        builder: (context) => ChatView(),
+        builder: (context) => ChatView(threads: args.threads),
         settings: data,
       );
     },
   };
+}
+
+// *************************************************************************
+// Arguments holder classes
+// **************************************************************************
+
+//ChatView arguments holder class
+class ChatViewArguments {
+  final Threads threads;
+  ChatViewArguments({@required this.threads});
 }

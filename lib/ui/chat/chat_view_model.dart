@@ -17,10 +17,10 @@ class ChatViewModel extends BaseViewModel {
   final BehaviorSubject _sendMessageController = BehaviorSubject<String>();
 
   Function(String) get newMessage => _sendMessageController.sink.add;
+  Threads _threads;
 
-  ChatViewModel() {
+  ChatViewModel(this._threads) {
     getChatMessageList();
-    getNewChatMessage();
   }
 
   int _currentTabIndex = 0;
@@ -36,6 +36,15 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
+    _firebaseDbService.getMessage(_threads).listen((List<Message> list) {
+      _currentChatList.addAll(list);
+      notifyListeners();
+    }, onError: (e) {
+      print(e);
+    });
+  }
+
+  getNewChatMessage() {
     _firebaseDbService.createMessageThread("oneToOne").listen(
         (String snapshot) {
       print(snapshot);
@@ -44,9 +53,24 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
-  getNewChatMessage() {}
-
-  sendNewMessage() {}
+  sendNewMessage() {
+    _firebaseDbService
+        .sendMessage(
+            _threads,
+            Message(
+                type: "text",
+                time: "11:50",
+                data: MessageData(text: _sendMessageController.value)))
+        .listen((event) {
+      _currentChatList.add(Message(
+          type: "text",
+          time: "11:50",
+          data: MessageData(text: _sendMessageController.value)));
+      notifyListeners();
+    }, onError: (e) {
+      print(e);
+    });
+  }
 
   @override
   void dispose() {

@@ -87,6 +87,7 @@ class FirebaseDbService {
             .once())
             .map((DataSnapshot snapshot) =>
             Threads.fromJson(
+                (snapshot.value as LinkedHashMap<dynamic, dynamic>).keys.first,
                 (snapshot.value as LinkedHashMap<dynamic, dynamic>)
                     .values
                     .first)))
@@ -94,20 +95,44 @@ class FirebaseDbService {
         .asStream();
   }
 
-/* Stream<DataSnapshot> getMessage() {
-    return Stream.fromFuture(_authenticationService.currentUser())
+  Stream<void> sendMessage(Threads threads, Message message) {
+    return Stream.fromFuture(_authenticationService.currentUser()).flatMap((
+        value) =>
+        Stream.fromFuture(_firebaseDatabase
+            .reference()
+            .child("threads")
+            .child(threads.key)
+            .child("messages")
+            .push().set(message.toJson())
+        ));
+  }
+
+  Stream<List<Message>> getMessage(Threads threads) {
+    return Stream
+        .fromFuture(_authenticationService.currentUser())
         .transform(FlatMapStreamTransformer((FirebaseUser user) =>
-            Stream.fromFuture(_firebaseDatabase
-                .reference()
-                .child("users")
-                .child(user.uid)
-                .child("message")
-                .once())))
-        .transform(FlatMapStreamTransformer((DataSnapshot snapshot) {
-      if (snapshot == null)
-        return createMessageThread();
-      else
-        Stream.value(snapshot);
-    }));
-  }*/
+        Stream.fromFuture(_firebaseDatabase
+            .reference()
+            .child("threads")
+            .child(threads.key)
+            .child("messages")
+            .once())))
+        .flatMap((DataSnapshot snapshot) {
+      if (snapshot.value == null) {
+        return Stream.value(<Message>[]);
+      }
+      else {
+        return Stream.value(
+            (snapshot.value as LinkedHashMap<dynamic, dynamic>).values)
+            .expand((element) => element)
+            .map((event) {
+          print(Message.fromJson(event).toJson());
+          return Message.fromJson(event);
+        })
+            .toList().asStream();
+      }
+    }
+
+    );
+  }
 }

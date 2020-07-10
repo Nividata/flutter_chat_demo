@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
+import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/utility/app_colors.dart';
 import 'package:stacked/stacked.dart';
 import 'chat_view_model.dart';
 
 class ChatView extends StatelessWidget {
+  Threads threads;
+
+  ChatView({@required this.threads});
+
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder.reactive(
-      viewModelBuilder: () => ChatViewModel(),
+      viewModelBuilder: () => ChatViewModel(threads),
       builder: (context, ChatViewModel model, child) => SafeArea(
         top: true,
         bottom: true,
@@ -23,7 +28,7 @@ class ChatView extends StatelessWidget {
               ),
             ),
             title: Text(
-              "Cvisitor1",
+              "${threads.name}",
               style: Theme.of(context).textTheme.headline6,
             ),
             backgroundColor: AppColors.secondaryLightest2,
@@ -33,17 +38,20 @@ class ChatView extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Expanded(
-                  child: (model.currentChatList.isNotEmpty)
-                      ? ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          itemCount: model.currentChatList.length,
-                          itemBuilder: (context, index) {
-                            return (model.currentChatList[index].type == 1)
-                                ? senderChatMessage(
-                                    context, model.currentChatList[index])
-                                : myChatMessage(
-                                    context, model.currentChatList[index]);
-                          })
+                  child: (model.currentChatList != null)
+                      ? (model.currentChatList.isNotEmpty)
+                          ? ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              itemCount: model.currentChatList.length,
+                              itemBuilder: (context, index) {
+                                return (model.currentChatList[index].type ==
+                                        "text")
+                                    ? senderChatMessage(
+                                        context, model.currentChatList[index])
+                                    : myChatMessage(
+                                        context, model.currentChatList[index]);
+                              })
+                          : Container()
                       : Center(child: CircularProgressIndicator()),
                 ),
                 sendMessage(context, model)
@@ -79,7 +87,7 @@ class ChatView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      message.message,
+                      message.data.text,
                       style: Theme.of(context)
                           .textTheme
                           .bodyText2
@@ -111,8 +119,7 @@ class ChatView extends StatelessWidget {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: new NetworkImage(message.image))),
+                      fit: BoxFit.fill, image: new NetworkImage("https://i.imgur.com/BoN9kdC.png"))),
             ),
             Flexible(
               child: Container(
@@ -128,7 +135,7 @@ class ChatView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      message.name,
+                      "jsdf",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: Theme.of(context)
@@ -140,7 +147,7 @@ class ChatView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
-                          message.message,
+                          message.data.text,
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         SizedBox(

@@ -19,6 +19,9 @@ class CurrentChatViewModel extends BaseViewModel {
 
   getActiveChatList() {
     _firebaseDbService.getThreadList().listen((List<Threads> list) {
+      list.forEach((element) {
+        print(element.toJson());
+      });
       _currentChatList.addAll(list);
       notifyListeners();
     }, onError: (e) {
@@ -26,7 +29,8 @@ class CurrentChatViewModel extends BaseViewModel {
     });
   }
 
-  onChatSelect() {
-    _navigationService.navigateTo(Routes.chatView);
+  onChatSelect(int index) {
+    _navigationService.navigateTo(Routes.chatView,
+        arguments: ChatViewArguments(threads: _currentChatList[index]));
   }
 }

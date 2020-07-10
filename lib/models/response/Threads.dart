@@ -8,10 +8,11 @@ class Threads {
   String name;
   String type;
 
-  Threads({this.owner, this.name, this.type});
+  Threads({this.key, this.owner, this.name, this.type});
 
-  static Threads fromJson(Map<dynamic, dynamic> json) {
+  static Threads fromJson(String key, Map<dynamic, dynamic> json) {
     return Threads(
+      key: key,
       type: json['type'] as String,
       owner: json['owner'] as String,
       name: json['name'] as String,
@@ -19,6 +20,7 @@ class Threads {
   }
 
   Map<dynamic, dynamic> toJson() => {
+        'key': key,
         'type': type,
         'name': name,
         'owner': owner,
