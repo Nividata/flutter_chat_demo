@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: model.isLoggedIn ? Routes.chatView : Routes.signInView,
+        initialRoute: model.isLoggedIn ? Routes.currentChatView : Routes.signInView,
         onGenerateRoute: Router(),
         navigatorKey: locator<NavigationService>().navigatorKey,
       ),

@@ -56,11 +56,9 @@ class FirebaseDbService {
               .reference()
               .child("threads")
               .child(tuple2.item2)
-              .update({
-            "name": name,
-            "owner": "${tuple2.item1}",
-            "type": "oneToOne"
-          })),
+              .update(
+              Threads(name: name, type: "oneToOne", owner: tuple2.item1)
+                  .toJson())),
         ], (List<void> b) => b.length.toString()));
   }
 

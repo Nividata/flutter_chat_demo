@@ -36,18 +36,12 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
-    _firebaseDbService.getThreadList().listen((List<Threads> snapshot) {
-      snapshot.forEach((element) {
-        print("${element.toJson()}");
-      });
-    }, onError: (e) {
-      print(e);
-    });
-    /*_firebaseDbService.createMessageThread("oneToOne").listen((String snapshot) {
+    _firebaseDbService.createMessageThread("oneToOne").listen(
+        (String snapshot) {
       print(snapshot);
     }, onError: (e) {
       print(e);
-    });*/
+    });
   }
 
   getNewChatMessage() {}
