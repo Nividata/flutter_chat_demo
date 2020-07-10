@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
+import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -35,16 +36,18 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
-    /*_firebaseDbService.getMessage().listen((DataSnapshot snapshot) {
-      Map<dynamic, dynamic> values = snapshot.value;
-    }, onError: (e) {
-      print(e);
-    });*/
-    _firebaseDbService.createMessageThread().listen((String snapshot) {
-      print(snapshot);
+    _firebaseDbService.getThreadList().listen((List<Threads> snapshot) {
+      snapshot.forEach((element) {
+        print("${element.toJson()}");
+      });
     }, onError: (e) {
       print(e);
     });
+    /*_firebaseDbService.createMessageThread("oneToOne").listen((String snapshot) {
+      print(snapshot);
+    }, onError: (e) {
+      print(e);
+    });*/
   }
 
   getNewChatMessage() {}
