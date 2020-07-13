@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
@@ -58,14 +57,16 @@ class ChatViewModel extends BaseViewModel {
         .sendMessage(
             _threads,
             Message(
-                type: "text",
+                msgType: "text",
                 time: "11:50",
-                data: MessageData(text: _sendMessageController.value)))
+                from: _threads.key,
+                text: _sendMessageController.value))
         .listen((event) {
       _currentChatList.add(Message(
-          type: "text",
+          msgType: "text",
           time: "11:50",
-          data: MessageData(text: _sendMessageController.value)));
+          from: _threads.key,
+          text: _sendMessageController.value));
       notifyListeners();
     }, onError: (e) {
       print(e);

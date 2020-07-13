@@ -19,7 +19,7 @@ class Threads {
     );
   }
 
-  Map<dynamic, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         'key': key,
         'type': type,
         'name': name,

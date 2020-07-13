@@ -44,11 +44,10 @@ class ChatView extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               itemCount: model.currentChatList.length,
                               itemBuilder: (context, index) {
-                                return (model.currentChatList[index].type ==
-                                        "text")
-                                    ? senderChatMessage(
+                                return (model.currentChatList[index].isMe)
+                                    ? myChatMessage(
                                         context, model.currentChatList[index])
-                                    : myChatMessage(
+                                    : senderChatMessage(
                                         context, model.currentChatList[index]);
                               })
                           : Container()
@@ -87,7 +86,7 @@ class ChatView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      message.data.text,
+                      message.text,
                       style: Theme.of(context)
                           .textTheme
                           .bodyText2
@@ -119,7 +118,9 @@ class ChatView extends StatelessWidget {
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                      fit: BoxFit.fill, image: new NetworkImage("https://i.imgur.com/BoN9kdC.png"))),
+                      fit: BoxFit.fill,
+                      image:
+                          new NetworkImage("https://i.imgur.com/BoN9kdC.png"))),
             ),
             Flexible(
               child: Container(
@@ -147,7 +148,7 @@ class ChatView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
-                          message.data.text,
+                          message.text,
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         SizedBox(

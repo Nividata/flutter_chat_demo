@@ -1,33 +1,45 @@
+import 'package:flutter_chat_demo/models/response/FbMessage.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class Message {
-  String type;
-  MessageData data;
+  String msgType;
+  bool isMe;
   String time;
-
-  Message({this.type, this.data, this.time});
-
-  factory Message.fromJson(Map<dynamic, dynamic> json) => Message(
-        type: json['type'] as String,
-        data: MessageData.fromJson(json['data'] as Map<dynamic, dynamic>),
-        time: json['time'] as String,
-      );
-
-  Map<dynamic, dynamic> toJson() => {
-        'type': type,
-        'data': data.toJson(),
-        'time': time,
-      };
-}
-
-class MessageData {
+  String from;
   String text;
 
-  MessageData({this.text});
+  Message({this.msgType, this.isMe, this.time, this.from, this.text});
 
-  static MessageData fromJson(Map<dynamic, dynamic> map) =>
-      MessageData(text: map["text"]);
+  factory Message.fromJson(Map<dynamic, dynamic> json) =>
+      Message(
+          msgType: json['msgType'] as String,
+          isMe: json['isMe'] as bool,
+          time: json['time'] as String,
+          from: json['from'] as String,
+          text: json['text'] as String);
 
-  Map<dynamic, dynamic> toJson() => {"text": text};
+  Map<dynamic, dynamic> toJson() =>
+      {
+        'msgType': msgType,
+        'isMe': isMe,
+        'time': time,
+        'from': from,
+        'text': text,
+      };
+
+  factory Message.fromFbMessage(FbMessage fbMessage, String uid) =>
+      Message(
+          msgType: fbMessage.type,
+          text: fbMessage.data.text,
+          from: fbMessage.meta.from,
+          time: fbMessage.meta.time,
+          isMe: fbMessage.meta.from == uid);
+
+  FbMessage toFbMessage() =>
+      FbMessage(
+          type: msgType,
+          meta: MessageMeta(from: from, time: time),
+          data: MessageData(text: text)
+      );
 }

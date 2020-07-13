@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_demo/utility/app_colors.dart';
 import 'package:stacked/stacked.dart';
 
-import 'current_chat_view_model.dart';
+import 'all_user_view_model.dart';
 
-class CurrentChatView extends StatefulWidget {
+class AllUserView extends StatefulWidget {
   @override
-  _CurrentChatViewState createState() => _CurrentChatViewState();
+  _AllUserViewState createState() => _AllUserViewState();
 }
 
-class _CurrentChatViewState extends State<CurrentChatView>
+class _AllUserViewState extends State<AllUserView>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -17,8 +17,8 @@ class _CurrentChatViewState extends State<CurrentChatView>
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder.reactive(
-        viewModelBuilder: () => CurrentChatViewModel(),
-        builder: (context, CurrentChatViewModel model, child) => SafeArea(
+        viewModelBuilder: () => AllUserViewModel(),
+        builder: (context, AllUserViewModel model, child) => SafeArea(
               top: true,
               bottom: true,
               child: Scaffold(
@@ -27,12 +27,6 @@ class _CurrentChatViewState extends State<CurrentChatView>
                     "Active Chat",
                     style: Theme.of(context).textTheme.headline6,
                   ),
-                  actions: <Widget>[
-                    InkWell(
-                      child: Icon(Icons.add),
-                      onTap: model.onAddClick,
-                    )
-                  ],
                   backgroundColor: AppColors.secondaryLightest2,
                   elevation: 1,
                 ),
@@ -43,7 +37,7 @@ class _CurrentChatViewState extends State<CurrentChatView>
             ));
   }
 
-  Widget getChatList(CurrentChatViewModel model) {
+  Widget getChatList(AllUserViewModel model) {
     return ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 12),
         itemCount: model.currentChatList.length,
@@ -105,7 +99,7 @@ class _CurrentChatViewState extends State<CurrentChatView>
                                       style: Theme.of(context).textTheme.button,
                                     ),
                                     Text(
-                                      model.currentChatList[indext].type,
+                                      model.currentChatList[indext].avatarUrl,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2
@@ -124,7 +118,7 @@ class _CurrentChatViewState extends State<CurrentChatView>
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 26),
                                   child: Text(
-                                    model.currentChatList[indext].owner,
+                                    model.currentChatList[indext].avatarUrl,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: Theme.of(context).textTheme.button,

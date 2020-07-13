@@ -12,17 +12,20 @@ import 'package:flutter_chat_demo/ui/signIn/signin_view.dart';
 import 'package:flutter_chat_demo/ui/currentChat/current_chat_view.dart';
 import 'package:flutter_chat_demo/ui/chat/chat_view.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
+import 'package:flutter_chat_demo/ui/AllUserList/all_user_view.dart';
 
 class Routes {
   static const String splashView = '/splash-view';
   static const String signInView = '/sign-in-view';
   static const String currentChatView = '/current-chat-view';
   static const String chatView = '/chat-view';
+  static const String allUserView = '/all-user-view';
   static const all = <String>{
     splashView,
     signInView,
     currentChatView,
     chatView,
+    allUserView,
   };
 }
 
@@ -34,6 +37,7 @@ class Router extends RouterBase {
     RouteDef(Routes.signInView, page: SignInView),
     RouteDef(Routes.currentChatView, page: CurrentChatView),
     RouteDef(Routes.chatView, page: ChatView),
+    RouteDef(Routes.allUserView, page: AllUserView),
   ];
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
@@ -60,6 +64,12 @@ class Router extends RouterBase {
       var args = data.getArgs<ChatViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
         builder: (context) => ChatView(threads: args.threads),
+        settings: data,
+      );
+    },
+    AllUserView: (RouteData data) {
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => AllUserView(),
         settings: data,
       );
     },
