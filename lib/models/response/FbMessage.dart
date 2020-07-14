@@ -1,6 +1,18 @@
-import 'package:json_annotation/json_annotation.dart';
+class FbMessageKey {
+  final FbMessage fbMessage;
+  final String key;
 
-@JsonSerializable()
+  FbMessageKey({this.fbMessage, this.key});
+
+  factory FbMessageKey.fromJson(String key, Map<dynamic, dynamic> json) {
+    return FbMessageKey(key: key, fbMessage: FbMessage.fromJson(json));
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        key: fbMessage.toJson(),
+      };
+}
+
 class FbMessage {
   String type;
   MessageData data;

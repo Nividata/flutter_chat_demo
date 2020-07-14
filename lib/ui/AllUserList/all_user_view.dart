@@ -118,7 +118,7 @@ class _AllUserViewState extends State<AllUserView>
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 26),
                                   child: Text(
-                                    model.currentChatList[indext].user.avatarUrl,
+                                    model.currentChatList[indext].key,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: Theme.of(context).textTheme.button,

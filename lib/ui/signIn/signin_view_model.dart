@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
-import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:flutter_chat_demo/user/usecases/UserRepositoryImpl.dart';
@@ -62,7 +61,7 @@ class SignInViewModel extends BaseViewModel {
       _userRepository
           .authenticate(User(name: "mehul2", avatarUrl: "www.google.com"))
           .listen((event) {
-        _navigationService.replaceWith(Routes.chatView);
+        _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {
         print(e);
       });
@@ -78,7 +77,7 @@ class SignInViewModel extends BaseViewModel {
       _userRepository
           .authenticate(User(name: "mehul1", avatarUrl: "www.google.com"))
           .listen((event) {
-        _navigationService.replaceWith(Routes.chatView);
+        _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {
         print(e);
       });

@@ -28,13 +28,13 @@ class Message {
         'text': text,
       };
 
-  factory Message.fromFbMessage(FbMessage fbMessage, String uid) =>
+  factory Message.fromFbMessageKey(FbMessageKey fbMessageKey, String uid) =>
       Message(
-          msgType: fbMessage.type,
-          text: fbMessage.data.text,
-          from: fbMessage.meta.from,
-          time: fbMessage.meta.time,
-          isMe: fbMessage.meta.from == uid);
+          msgType: fbMessageKey.fbMessage.type,
+          text: fbMessageKey.fbMessage.data.text,
+          from: fbMessageKey.fbMessage.meta.from,
+          time: fbMessageKey.fbMessage.meta.time,
+          isMe: fbMessageKey.fbMessage.meta.from == uid);
 
   FbMessage toFbMessage() =>
       FbMessage(

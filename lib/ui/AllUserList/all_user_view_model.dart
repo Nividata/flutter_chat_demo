@@ -1,4 +1,5 @@
 import 'package:flutter_chat_demo/app/locator.dart';
+import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:stacked/stacked.dart';
@@ -26,9 +27,12 @@ class AllUserViewModel extends BaseViewModel {
   }
 
   onChatSelect(int index) {
-    _firebaseDbService.createThreadByUser(_currentChatList[index]);
-
-//    _navigationService.navigateTo(Routes.chatView,
-//        arguments: ChatViewArguments(threads: _currentChatList[index]));
+    _firebaseDbService.createThreadByUser(_currentChatList[index]).listen(
+        (event) {
+      _navigationService.replaceWith(Routes.chatView,
+          arguments: ChatViewArguments(threads: event));
+    }, onError: (e) {
+      print(e);
+    });
   }
 }

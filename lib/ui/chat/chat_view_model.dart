@@ -50,14 +50,9 @@ class ChatViewModel extends BaseViewModel {
             Message(
                 msgType: "text",
                 time: "11:50",
-                from: _threads.key,
                 text: _sendMessageController.value))
-        .listen((event) {
-      _currentChatList.add(Message(
-          msgType: "text",
-          time: "11:50",
-          from: _threads.key,
-          text: _sendMessageController.value));
+        .listen((Message message) {
+      _currentChatList.add(message);
       notifyListeners();
     }, onError: (e) {
       print(e);

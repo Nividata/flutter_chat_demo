@@ -70,11 +70,6 @@ class FirebaseDbService {
         })
         .expand((element) => element)
         .map((event) {
-          print(event);
-          print(event.runtimeType);
-          return event;
-        })
-        .map((event) {
           print(
               "UserKey  ${UserKey.fromJson(event.key, event.value).toJson()}");
           return UserKey.fromJson(event.key, event.value);
@@ -163,8 +158,11 @@ class FirebaseDbService {
                 .child("message")
                 .once())
             .map((DataSnapshot snapshot) {
-              return (snapshot.value as LinkedHashMap<dynamic, dynamic>)
-                  .entries;
+              if (snapshot.value != null)
+                return (snapshot.value as LinkedHashMap<dynamic, dynamic>)
+                    .entries;
+              else
+                throw Exception("no thread data");
             })
             .expand((element) => element)
             .map((event) {
@@ -190,43 +188,44 @@ class FirebaseDbService {
         .asStream();
   }
 
-  Stream<void> sendMessage(ThreadKey threads, Message message) {
+  Stream<Message> sendMessage(ThreadKey threads, Message message) {
     return Stream.fromFuture(_authenticationService.currentUser())
         .flatMap((FirebaseUser value) {
-      var msg = message.toFbMessage();
-      msg.meta.from = value.uid;
+      message.from = value.uid;
+      message.isMe = true;
       return Stream.fromFuture(_firebaseDatabase
-          .reference()
-          .child("threads")
-          .child(threads.key)
-          .child("messages")
-          .push()
-          .set(message.toJson()));
+              .reference()
+              .child("threads")
+              .child(threads.key)
+              .child("messages")
+              .push()
+              .set(message.toFbMessage().toJson()))
+          .map((event) => message);
     });
   }
 
   Stream<List<Message>> getMessage(ThreadKey threads) {
-    return Stream.fromFuture(_authenticationService.currentUser())
-        .transform(FlatMapStreamTransformer((FirebaseUser user) =>
-            Stream.fromFuture(_firebaseDatabase
+    return currentUser()
+        .flatMap((FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
                 .reference()
                 .child("threads")
                 .child(threads.key)
                 .child("messages")
-                .once())))
-        .flatMap((DataSnapshot snapshot) {
-      if (snapshot.value == null) {
+                .once())
+            .map((DataSnapshot snapshot) => Tuple2(user, snapshot)))
+        .flatMap((Tuple2<FirebaseUser, DataSnapshot> tuple2) {
+      if (tuple2.item2.value == null) {
         return Stream.value(<Message>[]);
       } else {
         return Stream.value(
-                (snapshot.value as LinkedHashMap<dynamic, dynamic>).values)
+                (tuple2.item2.value as LinkedHashMap<dynamic, dynamic>).entries)
             .expand((element) => element)
             .map((event) {
-              print(FbMessage.fromJson(event).toJson());
-              return FbMessage.fromJson(event);
+              print(FbMessageKey.fromJson(event.key, event.value).toJson());
+              return FbMessageKey.fromJson(event.key, event.value);
             })
-            .map((FbMessage fbMessage) => Message.fromFbMessage(
-                fbMessage, "XFiyZE7K4oSXdb93TDhrTRZvzCs2"))
+            .map((FbMessageKey fbMessage) =>
+                Message.fromFbMessageKey(fbMessage, tuple2.item1.uid))
             .toList()
             .asStream();
       }

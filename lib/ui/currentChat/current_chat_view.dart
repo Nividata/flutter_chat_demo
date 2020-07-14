@@ -124,7 +124,7 @@ class _CurrentChatViewState extends State<CurrentChatView>
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 26),
                                   child: Text(
-                                    model.currentChatList[indext].thread.owner,
+                                    model.currentChatList[indext].key,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: Theme.of(context).textTheme.button,
