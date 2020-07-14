@@ -13,15 +13,12 @@ class CurrentChatViewModel extends BaseViewModel {
     getActiveChatList();
   }
 
-  List<Threads> _currentChatList = List();
+  List<ThreadKey> _currentChatList = List();
 
-  List<Threads> get currentChatList => _currentChatList;
+  List<ThreadKey> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    _firebaseDbService.getThreadList().listen((List<Threads> list) {
-      list.forEach((element) {
-        print(element.toJson());
-      });
+    _firebaseDbService.getThreadList().listen((List<ThreadKey> list) {
       _currentChatList.addAll(list);
       notifyListeners();
     }, onError: (e) {

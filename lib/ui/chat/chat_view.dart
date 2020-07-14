@@ -6,7 +6,7 @@ import 'package:stacked/stacked.dart';
 import 'chat_view_model.dart';
 
 class ChatView extends StatelessWidget {
-  Threads threads;
+  ThreadKey threads;
 
   ChatView({@required this.threads});
 
@@ -28,7 +28,7 @@ class ChatView extends StatelessWidget {
               ),
             ),
             title: Text(
-              "${threads.name}",
+              "${threads.thread.name}",
               style: Theme.of(context).textTheme.headline6,
             ),
             backgroundColor: AppColors.secondaryLightest2,
