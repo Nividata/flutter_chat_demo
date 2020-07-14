@@ -1,6 +1,4 @@
 import 'package:flutter_chat_demo/app/locator.dart';
-import 'package:flutter_chat_demo/app/router.gr.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:stacked/stacked.dart';
@@ -14,12 +12,12 @@ class AllUserViewModel extends BaseViewModel {
     getActiveChatList();
   }
 
-  List<User> _currentChatList = List();
+  List<UserKey> _currentChatList = List();
 
-  List<User> get currentChatList => _currentChatList;
+  List<UserKey> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    _firebaseDbService.getAllUserList().listen((List<User> list) {
+    _firebaseDbService.getAllUserList().listen((List<UserKey> list) {
       _currentChatList.addAll(list);
       notifyListeners();
     }, onError: (e) {
@@ -27,8 +25,9 @@ class AllUserViewModel extends BaseViewModel {
     });
   }
 
-
   onChatSelect(int index) {
+    _firebaseDbService.createThreadByUser(_currentChatList[index]);
+
 //    _navigationService.navigateTo(Routes.chatView,
 //        arguments: ChatViewArguments(threads: _currentChatList[index]));
   }

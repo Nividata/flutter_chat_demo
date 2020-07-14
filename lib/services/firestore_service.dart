@@ -35,6 +35,23 @@ class FirebaseDbService {
   Stream<FirebaseUser> currentUser() =>
       Stream.fromFuture(_authenticationService.currentUser());
 
+
+  Stream<UserKey> currentUserData() =>
+      currentUser().flatMap((FirebaseUser user) =>
+          Stream.fromFuture(_firebaseDatabase
+              .reference()
+              .child("users")
+              .child(user.uid)
+              .once()).map((DataSnapshot snapshot) {
+            print(UserKey.fromJson(
+                snapshot.key, snapshot.value as LinkedHashMap<dynamic, dynamic>)
+                .toJson());
+            return UserKey.fromJson(
+                snapshot.key,
+                snapshot.value as LinkedHashMap<dynamic, dynamic>);
+          })
+      );
+
   Stream<List<Threads>> getAllThreadList() {
     return Stream.fromFuture(_firebaseDatabase
         .reference()
@@ -53,36 +70,72 @@ class FirebaseDbService {
     }).toList().asStream();
   }
 
-  Stream<List<User>> getAllUserList() {
+  Stream<List<UserKey>> getAllUserList() {
     return Stream.fromFuture(_firebaseDatabase
         .reference()
         .child("users")
-        .once()).map((DataSnapshot snapshot) {
-      print(snapshot.key);
-      print(snapshot.value);
-      print((snapshot.value as LinkedHashMap<dynamic, dynamic>).values);
-      return (snapshot.value as LinkedHashMap<dynamic, dynamic>).values;
-    }).expand((element) => element)
+        .once())
+        .map((DataSnapshot snapshot) {
+      return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
+    })
+        .expand((element) => element)
         .map((event) {
       print(event);
-      print("ok123  ${User.fromJson(event).toJson()}");
-      return User.fromJson(event);
+      print(event.runtimeType);
+      return event;
+    })
+        .map((event) {
+      print("UserKey  ${UserKey.fromJson(event.key, event.value).toJson()}");
+      return UserKey.fromJson(event.key, event.value);
     }).toList().asStream();
   }
 
-  Stream<String> createMessageThread(String name) {
-    return Stream.fromFuture(_authenticationService.currentUser())
-        .transform(FlatMapStreamTransformer((FirebaseUser user) =>
+  createThreadByUser(UserKey otherUser) {
+    return currentUserData()
+        .map((event) {
+      print("otherUser  ${otherUser.toJson()}");
+      print("currentUser  ${event.toJson()}");
+      return event;
+    }).map((UserKey currentUser) {
+      print(currentUser.user.msgKey);
+      return currentUser.user.msgKey;
+    })
+        .expand((element) => element)
+        .map((event) {
+      print(event.key);
+      return event.key;
+    })
+        .where((event) {
+      print(otherUser.user.msgKey.map((e) => e.key).contains(event));
+      return otherUser.user.msgKey.map((e) => e.key).contains(event);
+    }).defaultIfEmpty("")
+        .flatMap((value) {
+      if (value.isEmpty) {
+        return createMessageThread("oneToOne", otherUser);
+      } else {
+        return getThreadByMsgKey(value);
+      }
+    }).listen((event) {
+      print(event.runtimeType);
+      print(event.toJson());
+    }, onError: (e) {
+      print(e);
+    });
+  }
+
+  Stream<Threads> createMessageThread(String name, UserKey otherUser) {
+    return currentUser()
+        .flatMap((FirebaseUser currentUser) =>
         Stream.value(
             Tuple2(
-                user.uid,
+                currentUser.uid,
                 _firebaseDatabase
                     .reference()
                     .child("users")
-                    .child(user.uid)
+                    .child(currentUser.uid)
                     .child("message")
                     .push()
-                    .key))))
+                    .key)))
         .flatMap((Tuple2 tuple2) =>
         ZipStream([
           Stream.fromFuture(_firebaseDatabase
@@ -94,12 +147,41 @@ class FirebaseDbService {
               .update({"owner": "${tuple2.item1}"})),
           Stream.fromFuture(_firebaseDatabase
               .reference()
+              .child("users")
+              .child(otherUser.key)
+              .child("message")
+              .child(tuple2.item2)
+              .update({"owner": "${otherUser.key}"})),
+          Stream.fromFuture(_firebaseDatabase
+              .reference()
               .child("threads")
               .child(tuple2.item2)
               .update(
               Threads(name: name, type: "oneToOne", owner: tuple2.item1)
                   .toJson())),
-        ], (List<void> b) => b.length.toString()));
+        ], (List<void> b) => b.length.toString()
+        ).flatMap((value) => getThreadByMsgKey(tuple2.item2))
+    );
+  }
+
+  Stream<Threads> getThreadByMsgKey(String msgKey) {
+    return Stream.fromFuture(_firebaseDatabase
+        .reference()
+        .child("threads")
+        .orderByKey()
+        .equalTo(msgKey)
+        .once())
+        .map((DataSnapshot snapshot) {
+      print(snapshot.key);
+      print(snapshot.value);
+      print((snapshot.value as LinkedHashMap<dynamic, dynamic>).values);
+      return (snapshot.value as LinkedHashMap<dynamic, dynamic>).values;
+    }).expand((element) => element)
+        .map((event) {
+      print(event);
+      print(Threads.fromJson("sd", event).toJson());
+      return Threads.fromJson("sd", event);
+    });
   }
 
   Stream<List<Threads>> getThreadList() {

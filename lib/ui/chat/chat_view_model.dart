@@ -43,15 +43,6 @@ class ChatViewModel extends BaseViewModel {
     });
   }
 
-  getNewChatMessage() {
-    _firebaseDbService.createMessageThread("oneToOne").listen(
-        (String snapshot) {
-      print(snapshot);
-    }, onError: (e) {
-      print(e);
-    });
-  }
-
   sendNewMessage() {
     _firebaseDbService
         .sendMessage(

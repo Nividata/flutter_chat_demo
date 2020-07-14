@@ -93,13 +93,13 @@ class _AllUserViewState extends State<AllUserView>
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Text(
-                                      model.currentChatList[indext].name,
+                                      model.currentChatList[indext].user.name,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: Theme.of(context).textTheme.button,
                                     ),
                                     Text(
-                                      model.currentChatList[indext].avatarUrl,
+                                      model.currentChatList[indext].user.avatarUrl,
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2
@@ -118,7 +118,7 @@ class _AllUserViewState extends State<AllUserView>
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 26),
                                   child: Text(
-                                    model.currentChatList[indext].avatarUrl,
+                                    model.currentChatList[indext].user.avatarUrl,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: Theme.of(context).textTheme.button,

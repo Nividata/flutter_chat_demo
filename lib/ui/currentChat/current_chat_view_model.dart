@@ -29,15 +29,6 @@ class CurrentChatViewModel extends BaseViewModel {
     });
   }
 
-  getNewChatMessage() {
-    _firebaseDbService.createMessageThread("oneToOne").listen(
-            (String snapshot) {
-          print(snapshot);
-        }, onError: (e) {
-      print(e);
-    });
-  }
-
   onChatSelect(int index) {
     _navigationService.navigateTo(Routes.chatView,
         arguments: ChatViewArguments(threads: _currentChatList[index]));
