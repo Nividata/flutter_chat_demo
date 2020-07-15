@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_chat_demo/Repository.dart';
 import 'package:flutter_chat_demo/models/response/FbMessage.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
@@ -13,13 +14,14 @@ import 'package:rxdart/transformers.dart';
 import 'package:tuple/tuple.dart';
 
 @lazySingleton
-class FirebaseDbService {
+class FirebaseDbService implements Repository {
   AuthenticationService _authenticationService;
 
   FirebaseDbService(this._authenticationService);
 
   final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
 
+  @override
   Stream<void> authenticate(Map<String, dynamic> data) {
     return Stream.fromFuture(_authenticationService.currentUser()).transform(
         FlatMapStreamTransformer((FirebaseUser user) => Stream.fromFuture(
@@ -30,9 +32,12 @@ class FirebaseDbService {
                 .update(data))));
   }
 
-  Stream<FirebaseUser> currentUser() =>
-      Stream.fromFuture(_authenticationService.currentUser());
+  @override
+  Stream<FirebaseUser> currentUser() {
+    return Stream.fromFuture(_authenticationService.currentUser());
+  }
 
+  @override
   Stream<UserKey> currentUserData() => currentUser().flatMap(
       (FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
                   .reference()
@@ -47,6 +52,7 @@ class FirebaseDbService {
                 snapshot.value as LinkedHashMap<dynamic, dynamic>);
           }));
 
+  @override
   Stream<List<ThreadKey>> getAllThreadList() {
     return Stream.fromFuture(
             _firebaseDatabase.reference().child("threads").once())
@@ -62,6 +68,7 @@ class FirebaseDbService {
         .asStream();
   }
 
+  @override
   Stream<List<UserKey>> getAllUserList() {
     return Stream.fromFuture(
             _firebaseDatabase.reference().child("users").once())
@@ -78,6 +85,7 @@ class FirebaseDbService {
         .asStream();
   }
 
+  @override
   Stream<ThreadKey> createThreadByUser(UserKey otherUser) {
     return currentUserData()
         .map((UserKey currentUser) => currentUser.user.msgKey)
@@ -95,6 +103,7 @@ class FirebaseDbService {
     });
   }
 
+  @override
   Stream<ThreadKey> createMessageThread(String name, UserKey otherUser) {
     return currentUser()
         .flatMap((FirebaseUser currentUser) => Stream.value(Tuple2(
@@ -132,6 +141,7 @@ class FirebaseDbService {
                 .flatMap((value) => getThreadByMsgKey(tuple2.item2)));
   }
 
+  @override
   Stream<ThreadKey> getThreadByMsgKey(String msgKey) {
     return Stream.fromFuture(_firebaseDatabase
             .reference()
@@ -149,6 +159,7 @@ class FirebaseDbService {
         });
   }
 
+  @override
   Stream<List<ThreadKey>> getThreadList() {
     return currentUser()
         .flatMap((FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
@@ -188,6 +199,7 @@ class FirebaseDbService {
         .asStream();
   }
 
+  @override
   Stream<Message> sendMessage(ThreadKey threads, Message message) {
     return Stream.fromFuture(_authenticationService.currentUser())
         .flatMap((FirebaseUser value) {
@@ -204,6 +216,28 @@ class FirebaseDbService {
     });
   }
 
+  Stream<Message> getNewMessages(ThreadKey threads) {
+    return currentUser()
+        .flatMap((FirebaseUser user) => _firebaseDatabase
+            .reference()
+            .child("threads")
+            .child(threads.key)
+            .child("messages")
+            .limitToLast(10)
+            .onChildAdded
+            .map((event) => Tuple2(user, event)))
+        .map((event) {
+      if (event.item2.snapshot.value != null)
+        return Message.fromFbMessageKey(
+            FbMessageKey.fromJson(event.item2.snapshot.key,
+                event.item2.snapshot.value as LinkedHashMap<dynamic, dynamic>),
+            event.item1.uid);
+      else
+        return null;
+    });
+  }
+
+  @override
   Stream<List<Message>> getMessage(ThreadKey threads) {
     return currentUser()
         .flatMap((FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
@@ -221,7 +255,7 @@ class FirebaseDbService {
                 (tuple2.item2.value as LinkedHashMap<dynamic, dynamic>).entries)
             .expand((element) => element)
             .map((event) {
-              print(FbMessageKey.fromJson(event.key, event.value).toJson());
+//              print(FbMessageKey.fromJson(event.key, event.value).toJson());
               return FbMessageKey.fromJson(event.key, event.value);
             })
             .map((FbMessageKey fbMessage) =>

@@ -35,12 +35,16 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
-    _firebaseDbService.getMessage(_threads).listen((List<Message> list) {
-      _currentChatList.addAll(list);
-      notifyListeners();
+    _firebaseDbService.getNewMessages(_threads).listen((Message message) {
+      if (message != null) {
+        _currentChatList.add(message);
+        notifyListeners();
+      }
     }, onError: (e) {
       print(e);
     });
+
+//    _firebaseDbService.getNewMessages(_threads);
   }
 
   sendNewMessage() {
