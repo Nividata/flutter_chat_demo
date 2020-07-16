@@ -29,7 +29,7 @@ class SignInViewModel extends BaseViewModel {
   String _verificationId = "";
 
   final BehaviorSubject _phoneNumberController =
-      BehaviorSubject<String>.seeded("6354669944");
+      BehaviorSubject<String>.seeded("1234512345");
   final BehaviorSubject _otpController =
       BehaviorSubject<String>.seeded("123456");
 
@@ -59,7 +59,7 @@ class SignInViewModel extends BaseViewModel {
         (AuthResult authResult) {
       _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
       _userRepository
-          .authenticate(User(name: "mehul2", avatarUrl: "www.google.com"))
+          .authenticate(User(name: "mehul test", avatarUrl: "www.testimage.com"))
           .listen((event) {
         _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {

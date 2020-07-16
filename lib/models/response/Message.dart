@@ -19,7 +19,7 @@ class Message {
           from: json['from'] as String,
           text: json['text'] as String);
 
-  Map<dynamic, dynamic> toJson() =>
+  Map<String, dynamic> toJson() =>
       {
         'msgType': msgType,
         'isMe': isMe,

@@ -1,7 +1,7 @@
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
-import 'package:flutter_chat_demo/services/authentication_service.dart';
+import 'package:flutter_chat_demo/services/firebase_db_service.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
@@ -9,10 +9,10 @@ import 'package:stacked_services/stacked_services.dart';
 
 class ChatViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
-  AuthenticationService _authenticationService =
-      locator<AuthenticationService>();
 
   FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
+  FirestoreService _firestoreService = locator<FirestoreService>();
+
   final BehaviorSubject _sendMessageController = BehaviorSubject<String>();
 
   Function(String) get newMessage => _sendMessageController.sink.add;
@@ -35,7 +35,7 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
-    _firebaseDbService.getNewMessages(_threads).listen((Message message) {
+    _firestoreService.getNewMessages(_threads).listen((Message message) {
       if (message != null) {
         _currentChatList.add(message);
         notifyListeners();
@@ -43,12 +43,10 @@ class ChatViewModel extends BaseViewModel {
     }, onError: (e) {
       print(e);
     });
-
-//    _firebaseDbService.getNewMessages(_threads);
   }
 
   sendNewMessage() {
-    _firebaseDbService
+    _firestoreService
         .sendMessage(
             _threads,
             Message(
@@ -56,8 +54,7 @@ class ChatViewModel extends BaseViewModel {
                 time: "11:50",
                 text: _sendMessageController.value))
         .listen((Message message) {
-      _currentChatList.add(message);
-      notifyListeners();
+      print(message.toJson());
     }, onError: (e) {
       print(e);
     });

@@ -26,7 +26,7 @@ class FbMessage {
         meta: MessageMeta.fromJson(json['meta'] as Map<dynamic, dynamic>),
       );
 
-  Map<dynamic, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         'type': type,
         'data': data.toJson(),
         'meta': meta.toJson(),
@@ -44,7 +44,7 @@ class MessageMeta {
         time: map["time"],
       );
 
-  Map<dynamic, dynamic> toJson() => {"from": from, "time": time};
+  Map<String, dynamic> toJson() => {"from": from, "time": time};
 }
 
 class MessageData {
@@ -55,5 +55,5 @@ class MessageData {
   static MessageData fromJson(Map<dynamic, dynamic> map) =>
       MessageData(text: map["text"]);
 
-  Map<dynamic, dynamic> toJson() => {"text": text};
+  Map<String, dynamic> toJson() => {"text": text};
 }

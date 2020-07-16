@@ -7,6 +7,7 @@
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/services/third_party_services_module.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:flutter_chat_demo/services/firebase_db_service.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
@@ -20,6 +21,8 @@ Future<void> $initGetIt(GetIt g, {String environment}) async {
       () => thirdPartyServicesModule.dialogService);
   g.registerLazySingleton<FirebaseDbService>(
       () => FirebaseDbService(g<AuthenticationService>()));
+  g.registerLazySingleton<FirestoreService>(
+      () => FirestoreService(g<AuthenticationService>()));
   g.registerLazySingleton<NavigationService>(
       () => thirdPartyServicesModule.navigationService);
   final sharedPreferences = await thirdPartyServicesModule.prefs;
@@ -29,7 +32,7 @@ Future<void> $initGetIt(GetIt g, {String environment}) async {
   g.registerLazySingleton<SnackbarService>(
       () => thirdPartyServicesModule.snackbarService);
   g.registerLazySingleton<UserRepositoryImpl>(
-      () => UserRepositoryImpl(g<FirebaseDbService>()));
+      () => UserRepositoryImpl(g<FirebaseDbService>(), g<FirestoreService>()));
 }
 
 class _$ThirdPartyServicesModule extends ThirdPartyServicesModule {

@@ -1,7 +1,7 @@
 import 'dart:collection';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/Repository.dart';
 import 'package:flutter_chat_demo/models/response/FbMessage.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
@@ -14,23 +14,12 @@ import 'package:rxdart/transformers.dart';
 import 'package:tuple/tuple.dart';
 
 @lazySingleton
-class FirebaseDbService implements Repository {
+class FirestoreService implements Repository {
   AuthenticationService _authenticationService;
 
-  FirebaseDbService(this._authenticationService);
+  FirestoreService(this._authenticationService);
 
-  final FirebaseDatabase _firebaseDatabase = FirebaseDatabase.instance;
-
-  @override
-  Stream<void> authenticate(Map<String, dynamic> data) {
-    return Stream.fromFuture(_authenticationService.currentUser()).transform(
-        FlatMapStreamTransformer((FirebaseUser user) => Stream.fromFuture(
-            _firebaseDatabase
-                .reference()
-                .child("users")
-                .child(user.uid)
-                .update(data))));
-  }
+  final Firestore _firestore = Firestore.instance;
 
   @override
   Stream<FirebaseUser> currentUser() {
@@ -38,31 +27,35 @@ class FirebaseDbService implements Repository {
   }
 
   @override
-  Stream<UserKey> currentUserData() => currentUser().flatMap(
-      (FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
-                  .reference()
-                  .child("users")
-                  .child(user.uid)
-                  .once())
-              .map((DataSnapshot snapshot) {
-            print(UserKey.fromJson(snapshot.key,
-                    snapshot.value as LinkedHashMap<dynamic, dynamic>)
+  Stream<void> authenticate(Map<String, dynamic> data) {
+    return currentUser().flatMap((FirebaseUser user) => Stream.fromFuture(
+        _firestore.collection("users").document(user.uid).setData(data)));
+  }
+
+  @override
+  Stream<UserKey> currentUserData() =>
+      currentUser().flatMap((FirebaseUser user) => _firestore
+              .collection("users")
+              .document(user.uid)
+              .snapshots(includeMetadataChanges: true)
+              .map((DocumentSnapshot snapshot) {
+            print(UserKey.fromJson(snapshot.documentID,
+                    snapshot.data as LinkedHashMap<dynamic, dynamic>)
                 .toJson());
-            return UserKey.fromJson(snapshot.key,
-                snapshot.value as LinkedHashMap<dynamic, dynamic>);
+            return UserKey.fromJson(snapshot.documentID,
+                snapshot.data as LinkedHashMap<dynamic, dynamic>);
           }));
 
   @override
   Stream<List<ThreadKey>> getAllThreadList() {
-    return Stream.fromFuture(
-            _firebaseDatabase.reference().child("threads").once())
-        .map((DataSnapshot snapshot) {
-          return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
+    return Stream.fromFuture(_firestore.collection("threads").getDocuments())
+        .map((QuerySnapshot snapshot) {
+          return snapshot.documents;
         })
         .expand((element) => element)
         .map((event) {
-          print(ThreadKey.fromJson(event.key, event.value).toJson());
-          return ThreadKey.fromJson(event.key, event.value);
+          print(ThreadKey.fromJson(event.documentID, event.data).toJson());
+          return ThreadKey.fromJson(event.documentID, event.data);
         })
         .toList()
         .asStream();
@@ -70,16 +63,15 @@ class FirebaseDbService implements Repository {
 
   @override
   Stream<List<UserKey>> getAllUserList() {
-    return Stream.fromFuture(
-            _firebaseDatabase.reference().child("users").once())
-        .map((DataSnapshot snapshot) {
-          return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
+    return Stream.fromFuture(_firestore.collection("users").getDocuments())
+        .map((QuerySnapshot snapshot) {
+          return snapshot.documents;
         })
         .expand((element) => element)
         .map((event) {
           print(
-              "UserKey  ${UserKey.fromJson(event.key, event.value).toJson()}");
-          return UserKey.fromJson(event.key, event.value);
+              "UserKey  ${UserKey.fromJson(event.documentID, event.data).toJson()}");
+          return UserKey.fromJson(event.documentID, event.data);
         })
         .toList()
         .asStream();
@@ -103,38 +95,48 @@ class FirebaseDbService implements Repository {
     });
   }
 
+  test(UserKey otherUser) {
+    currentUserData()
+        .map((UserKey currentUser) => currentUser.user.msgKey)
+        .expand((element) => element)
+        .map((event) => event.key)
+        .where(
+            (event) => otherUser.user.msgKey.map((e) => e.key).contains(event))
+        .listen((event) {
+      print("ok ${event}");
+    }, onError: (e) {
+      print(e);
+    });
+  }
+
   @override
   Stream<ThreadKey> createMessageThread(String name, UserKey otherUser) {
     return currentUser()
         .flatMap((FirebaseUser currentUser) => Stream.value(Tuple2(
             currentUser.uid,
-            _firebaseDatabase
-                .reference()
-                .child("users")
-                .child(currentUser.uid)
-                .child("message")
-                .push()
-                .key)))
+            _firestore
+                .collection("users")
+                .document(currentUser.uid)
+                .collection("message")
+                .document()
+                .documentID)))
         .flatMap((Tuple2 tuple2) => ZipStream([
-              Stream.fromFuture(_firebaseDatabase
-                  .reference()
-                  .child("users")
-                  .child(tuple2.item1)
-                  .child("message")
-                  .child(tuple2.item2)
-                  .update({"owner": "${tuple2.item1}"})),
-              Stream.fromFuture(_firebaseDatabase
-                  .reference()
-                  .child("users")
-                  .child(otherUser.key)
-                  .child("message")
-                  .child(tuple2.item2)
-                  .update({"owner": "${otherUser.key}"})),
-              Stream.fromFuture(_firebaseDatabase
-                  .reference()
-                  .child("threads")
-                  .child(tuple2.item2)
-                  .update(
+              Stream.fromFuture(_firestore
+                  .collection("users")
+                  .document(tuple2.item1)
+                  .collection("message")
+                  .document(tuple2.item2)
+                  .setData({"owner": "${tuple2.item1}"})),
+              Stream.fromFuture(_firestore
+                  .collection("users")
+                  .document(otherUser.key)
+                  .collection("message")
+                  .document(tuple2.item2)
+                  .setData({"owner": "${otherUser.key}"})),
+              Stream.fromFuture(_firestore
+                  .collection("threads")
+                  .document(tuple2.item2)
+                  .setData(
                       Thread(name: name, type: "oneToOne", owner: tuple2.item1)
                           .toJson())),
             ], (List<void> b) => b.length.toString())
@@ -143,57 +145,40 @@ class FirebaseDbService implements Repository {
 
   @override
   Stream<ThreadKey> getThreadByMsgKey(String msgKey) {
-    return Stream.fromFuture(_firebaseDatabase
-            .reference()
-            .child("threads")
-            .orderByKey()
-            .equalTo(msgKey)
-            .once())
-        .map((DataSnapshot snapshot) {
-          return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
-        })
-        .expand((element) => element)
-        .map((event) {
-          print(ThreadKey.fromJson(event.key, event.value));
-          return ThreadKey.fromJson(event.key, event.value);
-        });
+    return Stream.fromFuture(
+            _firestore.collection("threads").document(msgKey).get())
+        .map((DocumentSnapshot snapshot) {
+      print(ThreadKey.fromJson(snapshot.documentID, snapshot.data));
+      return ThreadKey.fromJson(snapshot.documentID, snapshot.data);
+    });
   }
 
   @override
   Stream<List<ThreadKey>> getThreadList() {
     return currentUser()
-        .flatMap((FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
-                .reference()
-                .child("users")
-                .child(user.uid)
-                .child("message")
-                .once())
-            .map((DataSnapshot snapshot) {
-              if (snapshot.value != null)
-                return (snapshot.value as LinkedHashMap<dynamic, dynamic>)
-                    .entries;
+        .flatMap((FirebaseUser user) => Stream.fromFuture(_firestore
+                .collection("users")
+                .document(user.uid)
+                .collection("message")
+                .getDocuments())
+            .map((QuerySnapshot snapshot) {
+              print(snapshot.documents);
+              if (snapshot.documents.isNotEmpty)
+                return snapshot.documents;
               else
                 throw Exception("no thread data");
             })
             .expand((element) => element)
             .map((event) {
-              print(MsgKey.fromJson(event.key, event.value).toJson());
-              return MsgKey.fromJson(event.key, event.value);
+              print(MsgKey.fromJson(event.documentID, event.data).toJson());
+              return MsgKey.fromJson(event.documentID, event.data);
             }))
-        .flatMap((value) => Stream.fromFuture(_firebaseDatabase
-                .reference()
-                .child("threads")
-                .orderByKey()
-                .equalTo(value.key)
-                .once())
-            .map((DataSnapshot snapshot) {
-              return (snapshot.value as LinkedHashMap<dynamic, dynamic>)
-                  .entries;
-            })
-            .expand((element) => element)
-            .map((event) {
-              print(ThreadKey.fromJson(event.key, event.value).toJson());
-              return ThreadKey.fromJson(event.key, event.value);
+        .flatMap((value) => Stream.fromFuture(
+                    _firestore.collection("threads").document(value.key).get())
+                .map((DocumentSnapshot snapshot) {
+              print(ThreadKey.fromJson(snapshot.documentID, snapshot.data)
+                  .toJson());
+              return ThreadKey.fromJson(snapshot.documentID, snapshot.data);
             }))
         .toList()
         .asStream();
@@ -201,36 +186,37 @@ class FirebaseDbService implements Repository {
 
   @override
   Stream<Message> sendMessage(ThreadKey threads, Message message) {
-    return Stream.fromFuture(_authenticationService.currentUser())
-        .flatMap((FirebaseUser value) {
+    return currentUser().flatMap((FirebaseUser value) {
       message.from = value.uid;
       message.isMe = true;
-      return Stream.fromFuture(_firebaseDatabase
-              .reference()
-              .child("threads")
-              .child(threads.key)
-              .child("messages")
-              .push()
-              .set(message.toFbMessage().toJson()))
+      print(message.toFbMessage().toJson());
+      return Stream.fromFuture(_firestore
+              .collection("threads")
+              .document(threads.key)
+              .collection("messages")
+              .add(message.toFbMessage().toJson()))
           .map((event) => message);
     });
   }
 
   Stream<Message> getNewMessages(ThreadKey threads) {
     return currentUser()
-        .flatMap((FirebaseUser user) => _firebaseDatabase
-            .reference()
-            .child("threads")
-            .child(threads.key)
-            .child("messages")
-            .limitToLast(10)
-            .onChildAdded
+        .flatMap((FirebaseUser user) => _firestore
+            .collection("threads")
+            .document(threads.key)
+            .collection("messages")
+            .limit(10)
+            .snapshots()
+            .map((event) => event.documents)
+            .expand((element) => element)
             .map((event) => Tuple2(user, event)))
         .map((event) {
-      if (event.item2.snapshot.value != null)
+      print(event.item2.data);
+      print(event.item2.documentID);
+      if (event.item2.data != null)
         return Message.fromFbMessageKey(
-            FbMessageKey.fromJson(event.item2.snapshot.key,
-                event.item2.snapshot.value as LinkedHashMap<dynamic, dynamic>),
+            FbMessageKey.fromJson(event.item2.documentID,
+                event.item2.data as LinkedHashMap<dynamic, dynamic>),
             event.item1.uid);
       else
         return null;
@@ -240,23 +226,23 @@ class FirebaseDbService implements Repository {
   @override
   Stream<List<Message>> getMessage(ThreadKey threads) {
     return currentUser()
-        .flatMap((FirebaseUser user) => Stream.fromFuture(_firebaseDatabase
-                .reference()
-                .child("threads")
-                .child(threads.key)
-                .child("messages")
-                .once())
-            .map((DataSnapshot snapshot) => Tuple2(user, snapshot)))
-        .flatMap((Tuple2<FirebaseUser, DataSnapshot> tuple2) {
-      if (tuple2.item2.value == null) {
+        .flatMap((FirebaseUser user) => Stream.fromFuture(_firestore
+                .collection("threads")
+                .document(threads.key)
+                .collection("messages")
+                .getDocuments())
+            .map((QuerySnapshot snapshot) => snapshot.documents)
+            .map((event) => Tuple2(user, event)))
+        .flatMap((Tuple2<FirebaseUser, List<DocumentSnapshot>> tuple2) {
+      if (tuple2.item2 == null) {
         return Stream.value(<Message>[]);
       } else {
-        return Stream.value(
-                (tuple2.item2.value as LinkedHashMap<dynamic, dynamic>).entries)
+        return Stream.value(tuple2.item2)
             .expand((element) => element)
             .map((event) {
-//              print(FbMessageKey.fromJson(event.key, event.value).toJson());
-              return FbMessageKey.fromJson(event.key, event.value);
+              print(
+                  FbMessageKey.fromJson(event.documentID, event.data).toJson());
+              return FbMessageKey.fromJson(event.documentID, event.data);
             })
             .map((FbMessageKey fbMessage) =>
                 Message.fromFbMessageKey(fbMessage, tuple2.item1.uid))
