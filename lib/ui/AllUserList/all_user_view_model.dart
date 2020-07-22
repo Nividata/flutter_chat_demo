@@ -1,5 +1,6 @@
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
+import 'package:flutter_chat_demo/firestream/FireStream.dart';
 import 'package:flutter_chat_demo/services/firebase_db_service.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
@@ -20,7 +21,9 @@ class AllUserViewModel extends BaseViewModel {
   List<UserKey> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    _firestoreService.getAllUserList().listen((List<UserKey> list) {
+    FireStream.shared()
+        .getAllUserList()
+        .listen((List<UserKey> list) {
       _currentChatList.addAll(list);
       notifyListeners();
     }, onError: (e) {

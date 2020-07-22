@@ -33,6 +33,7 @@ dependencies:
   cloud_firestore: ^0.13.7
 
   tuple: ^1.0.3
+  optional: ^5.0.0
   rxdart: ^0.24.1
   shared_preferences: ^0.5.7+3
 

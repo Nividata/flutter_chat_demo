@@ -3,12 +3,14 @@ import 'dart:collection';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/Repository.dart';
+import 'package:flutter_chat_demo/models/DocumentChange.dart';
 import 'package:flutter_chat_demo/models/response/FbMessage.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:injectable/injectable.dart';
+import 'package:optional/optional.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/transformers.dart';
 import 'package:tuple/tuple.dart';
@@ -236,6 +238,7 @@ class FirebaseDbService implements Repository {
         return null;
     });
   }
+
 
   @override
   Stream<List<Message>> getMessage(ThreadKey threads) {

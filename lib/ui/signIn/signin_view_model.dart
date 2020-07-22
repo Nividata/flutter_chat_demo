@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
+import 'package:flutter_chat_demo/firestream/FireStream.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
-import 'package:flutter_chat_demo/user/usecases/UserRepositoryImpl.dart';
 import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
@@ -14,7 +14,6 @@ import 'package:tuple/tuple.dart';
 class SignInViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
   SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
-  UserRepositoryImpl _userRepository = locator<UserRepositoryImpl>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
 
@@ -57,10 +56,10 @@ class SignInViewModel extends BaseViewModel {
   onOtpVerify(String otp) {
     _authenticationService.verifyOtp(_verificationId, otp).listen(
         (AuthResult authResult) {
-      _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
-      _userRepository
-          .authenticate(User(name: "mehul test", avatarUrl: "www.testimage.com"))
+      FireStream.shared()
+          .addUsers(User(name: "mehul makwana", avatarUrl: "www.mehul.com"))
           .listen((event) {
+        _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {
         print(e);
@@ -73,10 +72,10 @@ class SignInViewModel extends BaseViewModel {
   onAutoOtpVerify(AuthCredential credential) {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
-      _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
-      _userRepository
-          .authenticate(User(name: "mehul1", avatarUrl: "www.google.com"))
+      FireStream.shared()
+          .addUsers(User(name: "mehul makwana", avatarUrl: "www.mehul.com"))
           .listen((event) {
+        _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {
         print(e);
