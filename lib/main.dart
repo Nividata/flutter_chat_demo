@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute:
-            model.isLoggedIn ? Routes.allUserView : Routes.signInView,
+            model.isLoggedIn ? Routes.currentChatView : Routes.signInView,
         onGenerateRoute: Router(),
         navigatorKey: locator<NavigationService>().navigatorKey,
       ),

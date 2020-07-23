@@ -1,8 +1,12 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseCoreHandler.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
+import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
+import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/realtime/RXRealtime.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:flutter_chat_demo/realtime/parse_to_listdata.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'Ref.dart';
 
@@ -16,9 +20,40 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
   Stream<List<UserKey>> getAllUserList(Path path) {
     return RXRealtime()
         .get(Ref.get(path))
-        .parseToListData()
-        .expand((element) => element)
+        .parseToListOfListData()
         .map((event) => UserKey(key: event.id, user: User.fromJson(event.data)))
+        .toList()
+        .asStream();
+  }
+
+  @override
+  Stream<List<ThreadKey>> getAllActiveChatUserList(Path path) {
+    Query query = Ref.get(path).orderByKey();
+    return getUserMessageThreadList(Paths.messagesPath())
+        .expand((element) => element)
+        .flatMap((value) => RXRealtime()
+                .get(query.equalTo(value.key))
+                .parseToListOfListData()
+                .map((event) {
+              print(
+                  ThreadKey(key: event.id, thread: Thread.fromJson(event.data))
+                      .toJson());
+              return ThreadKey(
+                  key: event.id, thread: Thread.fromJson(event.data));
+            }))
+        .toList()
+        .asStream();
+  }
+
+  @override
+  Stream<List<MsgKey>> getUserMessageThreadList(Path path) {
+    return RXRealtime()
+        .get(Ref.get(path))
+        .parseToListOfListData()
+        .map((event) {
+          print(MsgKey(key: event.id, msg: Msg.fromJson(event.data)).toJson());
+          return MsgKey(key: event.id, msg: Msg.fromJson(event.data));
+        })
         .toList()
         .asStream();
   }

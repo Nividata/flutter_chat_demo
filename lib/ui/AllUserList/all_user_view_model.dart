@@ -32,7 +32,7 @@ class AllUserViewModel extends BaseViewModel {
   }
 
   onChatSelect(int index) {
-    _firestoreService.createThreadByUser(_currentChatList[index]).listen(
+    _firebaseDbService.createThreadByUser(_currentChatList[index]).listen(
         (event) {
       _navigationService.replaceWith(Routes.chatView,
           arguments: ChatViewArguments(threads: event));

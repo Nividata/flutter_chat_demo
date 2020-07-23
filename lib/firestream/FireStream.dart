@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseService.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
+import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 
 class FireStream {
@@ -43,6 +44,12 @@ class FireStream {
 
   Stream<List<UserKey>> getAllUserList() {
     return getFirebaseService().core.getAllUserList(Paths.usersPath());
+  }
+
+  Stream<List<ThreadKey>> getAllActiveChatUserList() {
+    return getFirebaseService()
+        .core
+        .getAllActiveChatUserList(Paths.chatsPath());
   }
 
   String currentUserId() {

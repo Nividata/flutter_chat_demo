@@ -35,7 +35,7 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
-    _firestoreService.getNewMessages(_threads).listen((Message message) {
+    _firebaseDbService.getNewMessages(_threads).listen((Message message) {
       if (message != null) {
         _currentChatList.add(message);
         notifyListeners();
@@ -46,7 +46,7 @@ class ChatViewModel extends BaseViewModel {
   }
 
   sendNewMessage() {
-    _firestoreService
+    _firebaseDbService
         .sendMessage(
             _threads,
             Message(

@@ -1,5 +1,6 @@
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
+import 'package:flutter_chat_demo/firestream/FireStream.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/services/firebase_db_service.dart';
 import 'package:flutter_chat_demo/services/firestore_service.dart';
@@ -9,8 +10,6 @@ import 'package:stacked_services/stacked_services.dart';
 
 class CurrentChatViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
-  FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
-  FirestoreService _firestoreService = locator<FirestoreService>();
 
   CurrentChatViewModel() {
     getActiveChatList();
@@ -21,14 +20,9 @@ class CurrentChatViewModel extends BaseViewModel {
   List<ThreadKey> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    /*_firestoreService.getThreadList().listen((List<ThreadKey> list) {
+    FireStream.shared().getAllActiveChatUserList().listen(
+        (List<ThreadKey> list) {
       _currentChatList.addAll(list);
-      notifyListeners();
-    }, onError: (e) {
-      print(e);
-    });*/
-    _firestoreService.currentUserData().listen((UserKey list) {
-      print(list.toJson());
       notifyListeners();
     }, onError: (e) {
       print(e);

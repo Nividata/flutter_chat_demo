@@ -9,25 +9,43 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/transformers.dart';
 
 extension ValidationExtension on Stream<Optional<DocumentChange>> {
-  Stream<List<ListData>> parseToListData() {
+  Stream<ListData> parseToListOfListData() {
+    return this
+        .map((event) {
+          return event.value.snapshot;
+        })
+        .flatMap((value) => Stream.value(value)
+            .map((DataSnapshot snapshot) {
+              print(snapshot.runtimeType);
+              print(snapshot.value);
+              print(snapshot.key);
+              return (snapshot.value as LinkedHashMap<dynamic, dynamic>)
+                  .entries;
+            })
+            .expand((element) {
+              print(element.runtimeType);
+              return element;
+            })
+            .map((event) {
+              print("UserKey  ${event.key}" "${event.value}");
+              return ListData(event.key, event.value);
+            })
+            .toList()
+            .asStream())
+        .expand((element) => element);
+  }
+
+  /*Stream<ListData> parseToListData() {
     return this.map((event) {
       return event.value.snapshot;
-    }).flatMap((value) => Stream.value(value)
-        .map((DataSnapshot snapshot) {
-          print(snapshot.runtimeType);
-          print(snapshot.value);
-          print(snapshot.key);
-          return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
-        })
-        .expand((element) {
-          print(element.runtimeType);
-          return element;
-        })
-        .map((event) {
-          print("UserKey  ${event.key}" "${event.value}");
-          return ListData(event.key, event.value);
-        })
-        .toList()
-        .asStream());
-  }
+    }).map((DataSnapshot snapshot) {
+      print(snapshot.runtimeType);
+      print(snapshot.value);
+      print(snapshot.key);
+      return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
+    }).map((event) {
+      print("UserKey  ${event.key}" "${event.value}");
+      return ListData(event.key, event.value);
+    });
+  }*/
 }
