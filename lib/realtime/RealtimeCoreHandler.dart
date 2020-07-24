@@ -35,11 +35,8 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
                 .get(query.equalTo(value.key))
                 .parseToListOfListData()
                 .map((event) {
-              print(
-                  ThreadKey(key: event.id, thread: Thread.fromJson(event.data))
-                      .toJson());
-              return ThreadKey(
-                  key: event.id, thread: Thread.fromJson(event.data));
+      print(ThreadKey.fromJson(event.id, event.data).toJson());
+      return ThreadKey.fromJson(event.id, event.data);
             }))
         .toList()
         .asStream();
@@ -47,8 +44,13 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
 
   @override
   Stream<List<MsgKey>> getUserMessageThreadList(Path path) {
+    print(path.toString());
     return RXRealtime()
         .get(Ref.get(path))
+        .map((event) {
+          print(event);
+          return event;
+        })
         .parseToListOfListData()
         .map((event) {
           print(MsgKey(key: event.id, msg: Msg.fromJson(event.data)).toJson());
@@ -61,5 +63,10 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
   @override
   Stream<void> updateUsers(String path, Map<String, dynamic> data) {
     throw UnimplementedError();
+  }
+
+  @override
+  Map<String, String> timestamp() {
+    return ServerValue.timestamp;
   }
 }

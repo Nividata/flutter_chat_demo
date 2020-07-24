@@ -19,14 +19,11 @@ class RXRealtime {
     ]);
   }
 
-  Stream<String> add(DatabaseReference ref, dynamic data, {dynamic priority}) {
-    DatabaseReference childRef = ref.push();
-    String id = childRef.key;
+  Stream<void> add(DatabaseReference ref, dynamic data, {dynamic priority}) {
     if (priority == null) {
-      return Stream.fromFuture(childRef.set(data)).map((event) => id);
+      return Stream.fromFuture(ref.set(data));
     } else {
-      return Stream.fromFuture(childRef.set(data, priority: priority))
-          .map((event) => id);
+      return Stream.fromFuture(ref.set(data, priority: priority));
     }
   }
 
@@ -34,9 +31,9 @@ class RXRealtime {
     return Stream.fromFuture(ref.remove());
   }
 
-  Stream<Optional<DocumentChange>> get(Query query) {
+  Stream<DocumentChange> get(Query query) {
     return Stream.fromFuture(query.once()).map((event) {
-      return DocumentChange(event).toOptional;
+      return DocumentChange(event);
     });
   }
 }

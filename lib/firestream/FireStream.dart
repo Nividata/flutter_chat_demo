@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseService.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
+import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 
@@ -16,7 +17,6 @@ class FireStream {
 
   FireStream._internal() {
     FirebaseAuth.instance.onAuthStateChanged.listen((firebaseAuth) {
-      print(firebaseAuth.uid);
       if (this.firebaseUser == null && firebaseAuth != null) {
         this.firebaseUser = firebaseAuth;
       }
@@ -50,6 +50,25 @@ class FireStream {
     return getFirebaseService()
         .core
         .getAllActiveChatUserList(Paths.chatsPath());
+  }
+
+  Stream<ThreadKey> createThreadByUser(UserKey otherUser) {
+    return getFirebaseService()
+        .chat
+        .createThreadByUser(otherUser, firebaseUser.uid);
+  }
+
+  Stream<Message> listenOnChat(ThreadKey threads) {
+    return getFirebaseService().chat.listenOnChat(
+        Paths.chatMessagesPath(threads.key), threads, firebaseUser.uid);
+  }
+
+  Stream<Message> sendMessage(ThreadKey threads, Message message) {
+    return getFirebaseService().chat.sendMessage(
+        Paths.chatMessagesPath(threads.key),
+        threads,
+        message,
+        firebaseUser.uid);
   }
 
   String currentUserId() {

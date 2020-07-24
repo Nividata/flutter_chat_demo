@@ -211,7 +211,7 @@ class FirebaseDbService implements Repository {
               .reference()
               .child("threads")
               .child(threads.key)
-              .child("messages")
+              .child("message")
               .push()
               .set(message.toFbMessage().toJson()))
           .map((event) => message);
@@ -224,7 +224,7 @@ class FirebaseDbService implements Repository {
             .reference()
             .child("threads")
             .child(threads.key)
-            .child("messages")
+            .child("message")
             .limitToLast(10)
             .onChildAdded
             .map((event) => Tuple2(user, event)))
@@ -247,7 +247,7 @@ class FirebaseDbService implements Repository {
                 .reference()
                 .child("threads")
                 .child(threads.key)
-                .child("messages")
+                .child("message")
                 .once())
             .map((DataSnapshot snapshot) => Tuple2(user, snapshot)))
         .flatMap((Tuple2<FirebaseUser, DataSnapshot> tuple2) {

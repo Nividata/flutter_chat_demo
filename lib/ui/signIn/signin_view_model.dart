@@ -27,10 +27,26 @@ class SignInViewModel extends BaseViewModel {
 
   String _verificationId = "";
 
+  static List userDate1 = [
+    "1234512345",
+    "123456",
+    "mehul makwana",
+    "www.mehul.com"
+  ];
+
+  static List userDate2 = [
+    "1234512344",
+    "123456",
+    "chetan makwana",
+    "www.chetan.com"
+  ];
+
+  static List userDate = userDate1;
+
   final BehaviorSubject _phoneNumberController =
-      BehaviorSubject<String>.seeded("1234512345");
+      BehaviorSubject<String>.seeded(userDate[0]);
   final BehaviorSubject _otpController =
-      BehaviorSubject<String>.seeded("123456");
+      BehaviorSubject<String>.seeded(userDate[1]);
 
   Function(String) get changePhoneNumber => _phoneNumberController.sink.add;
 
@@ -57,7 +73,7 @@ class SignInViewModel extends BaseViewModel {
     _authenticationService.verifyOtp(_verificationId, otp).listen(
         (AuthResult authResult) {
       FireStream.shared()
-          .addUsers(User(name: "mehul makwana", avatarUrl: "www.mehul.com"))
+          .addUsers(User(name: userDate[2], avatarUrl: userDate[3]))
           .listen((event) {
         _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         _navigationService.replaceWith(Routes.currentChatView);
@@ -73,7 +89,7 @@ class SignInViewModel extends BaseViewModel {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
       FireStream.shared()
-          .addUsers(User(name: "mehul makwana", avatarUrl: "www.mehul.com"))
+          .addUsers(User(name: userDate[2], avatarUrl: userDate[3]))
           .listen((event) {
         _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         _navigationService.replaceWith(Routes.currentChatView);

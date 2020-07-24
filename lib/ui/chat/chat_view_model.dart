@@ -1,17 +1,13 @@
 import 'package:flutter_chat_demo/app/locator.dart';
+import 'package:flutter_chat_demo/firestream/FireStream.dart';
 import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
-import 'package:flutter_chat_demo/services/firebase_db_service.dart';
-import 'package:flutter_chat_demo/services/firestore_service.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 class ChatViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
-
-  FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
-  FirestoreService _firestoreService = locator<FirestoreService>();
 
   final BehaviorSubject _sendMessageController = BehaviorSubject<String>();
 
@@ -35,7 +31,7 @@ class ChatViewModel extends BaseViewModel {
   }
 
   getChatMessageList() {
-    _firebaseDbService.getNewMessages(_threads).listen((Message message) {
+    FireStream.shared().listenOnChat(_threads).listen((Message message) {
       if (message != null) {
         _currentChatList.add(message);
         notifyListeners();
@@ -46,7 +42,7 @@ class ChatViewModel extends BaseViewModel {
   }
 
   sendNewMessage() {
-    _firebaseDbService
+    FireStream.shared()
         .sendMessage(
             _threads,
             Message(

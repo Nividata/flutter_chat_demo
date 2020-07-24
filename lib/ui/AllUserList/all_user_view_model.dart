@@ -9,8 +9,6 @@ import 'package:stacked_services/stacked_services.dart';
 
 class AllUserViewModel extends BaseViewModel {
   NavigationService _navigationService = locator<NavigationService>();
-  FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
-  FirestoreService _firestoreService = locator<FirestoreService>();
 
   AllUserViewModel() {
     getActiveChatList();
@@ -21,9 +19,7 @@ class AllUserViewModel extends BaseViewModel {
   List<UserKey> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    FireStream.shared()
-        .getAllUserList()
-        .listen((List<UserKey> list) {
+    FireStream.shared().getAllUserList().listen((List<UserKey> list) {
       _currentChatList.addAll(list);
       notifyListeners();
     }, onError: (e) {
@@ -32,7 +28,7 @@ class AllUserViewModel extends BaseViewModel {
   }
 
   onChatSelect(int index) {
-    _firebaseDbService.createThreadByUser(_currentChatList[index]).listen(
+    FireStream.shared().createThreadByUser(_currentChatList[index]).listen(
         (event) {
       _navigationService.replaceWith(Routes.chatView,
           arguments: ChatViewArguments(threads: event));

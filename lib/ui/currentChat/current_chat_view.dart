@@ -36,7 +36,7 @@ class _CurrentChatViewState extends State<CurrentChatView>
                   backgroundColor: AppColors.secondaryLightest2,
                   elevation: 1,
                 ),
-                body: model.currentChatList.isNotEmpty
+                body: model.currentChatList != null
                     ? getChatList(model)
                     : Center(child: CircularProgressIndicator()),
               ),

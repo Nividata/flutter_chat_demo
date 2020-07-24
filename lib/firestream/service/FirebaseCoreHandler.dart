@@ -12,4 +12,6 @@ abstract class FirebaseCoreHandler {
   Stream<List<MsgKey>> getUserMessageThreadList(Path path);
 
   Stream<void> updateUsers(String path, Map<String, dynamic> data);
+
+  Map<String, String> timestamp();
 }
