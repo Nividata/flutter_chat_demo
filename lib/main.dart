@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
@@ -11,6 +12,7 @@ import 'main_view_model.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FireStream().initialize(RealtimeService());
+  Fimber.plantTree(DebugTree(useColors: true));
   await setupLocator();
   runApp(MyApp());
 }

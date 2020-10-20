@@ -22,6 +22,7 @@ class AllUserViewModel extends BaseViewModel {
     FireStream.shared().getAllUserList().listen((List<UserKey> list) {
       _currentChatList.addAll(list);
       notifyListeners();
+      print(list.length);
     }, onError: (e) {
       print(e);
     });
@@ -30,6 +31,7 @@ class AllUserViewModel extends BaseViewModel {
   onChatSelect(int index) {
     FireStream.shared().createThreadByUser(_currentChatList[index]).listen(
         (event) {
+      print("onChatSelect ${event}");
       _navigationService.replaceWith(Routes.chatView,
           arguments: ChatViewArguments(threads: event));
     }, onError: (e) {

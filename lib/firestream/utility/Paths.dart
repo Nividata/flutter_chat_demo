@@ -75,6 +75,10 @@ class Paths {
     return chatPath(chatId).child(Keys.Messages);
   }
 
+  static Path chatMessagePathByMessageId(String chatId){
+    return chatsPath().child(chatId).child(Keys.Meta);
+  }
+
   static Path chatUsersPath(String chatId) {
     return chatPath(chatId).child(Keys.Users);
   }

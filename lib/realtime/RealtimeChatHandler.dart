@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseChatHandler.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
@@ -15,13 +16,15 @@ class RealtimeChatHandler extends FirebaseChatHandler {
   @override
   Stream<UserKey> currentUserData(Path path) {
     return RXRealtime().get(Ref.get(path)).parseToListData().map((event) {
-      print(UserKey.fromJson(event.id, event.data).toJson());
+      print(
+          "currentUserData ${UserKey.fromJson(event.id, event.data).toJson()}");
       return UserKey.fromJson(event.id, event.data);
     });
   }
 
   @override
   Stream<Message> listenOnChat(Path path, ThreadKey threads, String uid) {
+    Fimber.e("${path.toString()} ${uid} ${threads.toJson()}");
     Query query = Ref.get(path).limitToLast(10);
     return RXRealtime().childOn(query).parseToListData().map((event) =>
         Message.fromFbMessageKey(
@@ -29,17 +32,18 @@ class RealtimeChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<Message> sendMessage(
-      Path path, ThreadKey threads, Message message, String uid) {
+  Stream<Message> sendMessage(Path path, ThreadKey threads, Message message,
+      String uid) {
     message.from = uid;
     message.isMe = true;
+    String key = Ref.get(path).push().key;
     return RXRealtime()
-        .add(Ref.get(path), message.toFbMessage().toJson())
+        .add(Ref.get(path.child(key)), message.toFbMessage().toJson())
         .map((event) => message);
   }
 
   @override
-  Stream<ThreadKey> createThreadByUser( UserKey otherUser, String uid) {
+  Stream<ThreadKey> createThreadByUser(UserKey otherUser, String uid) {
     return currentUserData(Paths.userPath())
         .map((UserKey currentUser) => currentUser.user.msgKey)
         .expand((element) => element)
@@ -60,16 +64,20 @@ class RealtimeChatHandler extends FirebaseChatHandler {
   @override
   Stream<ThreadKey> getThreadByMsgKey(Path path, String msgKey) {
     Query query = Ref.get(path).orderByKey().equalTo(msgKey);
+    print("getThreadByMsgKey ${query.path}");
     return RXRealtime().get(query).parseToListOfListData().map((event) {
-      print(ThreadKey.fromJson(event.id, event.data));
+      print("getThreadByMsgKey ${ThreadKey.fromJson(event.id, event.data)}");
       return ThreadKey.fromJson(event.id, event.data);
     });
   }
 
   @override
-  Stream<ThreadKey> createMessageThread(
-      Path path, String name, UserKey otherUser, String uid) {
-    String key = Ref.get(path).push().key;
+  Stream<ThreadKey> createMessageThread(Path path, String name,
+      UserKey otherUser, String uid) {
+    String key = Ref
+        .get(path)
+        .push()
+        .key;
 
     return ZipStream([
       RXRealtime().add(Ref.get(Paths.messagePath(key)), {"owner": "$uid"}),
@@ -77,7 +85,9 @@ class RealtimeChatHandler extends FirebaseChatHandler {
           {"owner": "${otherUser.key}"}),
       RXRealtime().add(Ref.get(Paths.chatPath(key)),
           Thread(name: name, type: "oneToOne", owner: uid).toJson())
-    ], (List<void> b) => b.length.toString())
-        .flatMap((value) => getThreadByMsgKey(Paths.chatPath(key), key));
+    ], (List<void> b) => b.length.toString()).flatMap((value) {
+      print("createMessageThread ${value}");
+      return getThreadByMsgKey(Paths.chatsPath(), key);
+    });
   }
 }
