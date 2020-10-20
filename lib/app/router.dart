@@ -14,4 +14,4 @@ import 'package:flutter_chat_demo/ui/splash/splash_view.dart';
     MaterialRoute(page: AllUserView),
   ],
 )
-class $Router {}
+class $Router1 {}

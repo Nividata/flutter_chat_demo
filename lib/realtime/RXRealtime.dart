@@ -1,6 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_chat_demo/models/DocumentChange.dart';
-import 'package:optional/optional.dart';
+import 'package:flutter_chat_demo/realtime/model/DocumentChange.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RXRealtime {

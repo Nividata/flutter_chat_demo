@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_chat_demo/models/DocumentChange.dart';
-import 'package:flutter_chat_demo/models/ListData.dart';
+import 'package:flutter_chat_demo/realtime/model/DocumentChange.dart';
+import 'package:flutter_chat_demo/realtime/model/ListData.dart';
 import 'package:optional/optional.dart';
 import 'package:optional/optional_internal.dart';
 import 'package:rxdart/rxdart.dart';

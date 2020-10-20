@@ -4,15 +4,17 @@
 // AutoRouteGenerator
 // **************************************************************************
 
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: public_member_api_docs
+
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter_chat_demo/ui/splash/splash_view.dart';
-import 'package:flutter_chat_demo/ui/signIn/signin_view.dart';
-import 'package:flutter_chat_demo/ui/currentChat/current_chat_view.dart';
-import 'package:flutter_chat_demo/ui/chat/chat_view.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
-import 'package:flutter_chat_demo/ui/AllUserList/all_user_view.dart';
+import 'package:flutter/material.dart';
+
+import '../models/response/Threads.dart';
+import '../ui/AllUserList/all_user_view.dart';
+import '../ui/chat/chat_view.dart';
+import '../ui/currentChat/current_chat_view.dart';
+import '../ui/signIn/signin_view.dart';
+import '../ui/splash/splash_view.dart';
 
 class Routes {
   static const String splashView = '/splash-view';
@@ -29,7 +31,7 @@ class Routes {
   };
 }
 
-class Router extends RouterBase {
+class Router1 extends RouterBase {
   @override
   List<RouteDef> get routes => _routes;
   final _routes = <RouteDef>[
@@ -42,32 +44,32 @@ class Router extends RouterBase {
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
   final _pagesMap = <Type, AutoRouteFactory>{
-    SplashView: (RouteData data) {
+    SplashView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => SplashView(),
         settings: data,
       );
     },
-    SignInView: (RouteData data) {
+    SignInView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => SignInView(),
         settings: data,
       );
     },
-    CurrentChatView: (RouteData data) {
+    CurrentChatView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => CurrentChatView(),
         settings: data,
       );
     },
-    ChatView: (RouteData data) {
-      var args = data.getArgs<ChatViewArguments>(nullOk: false);
+    ChatView: (data) {
+      final args = data.getArgs<ChatViewArguments>(nullOk: false);
       return MaterialPageRoute<dynamic>(
         builder: (context) => ChatView(threads: args.threads),
         settings: data,
       );
     },
-    AllUserView: (RouteData data) {
+    AllUserView: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => AllUserView(),
         settings: data,
@@ -76,11 +78,11 @@ class Router extends RouterBase {
   };
 }
 
-// *************************************************************************
-// Arguments holder classes
-// **************************************************************************
+/// ************************************************************************
+/// Arguments holder classes
+/// *************************************************************************
 
-//ChatView arguments holder class
+/// ChatView arguments holder class
 class ChatViewArguments {
   final ThreadKey threads;
   ChatViewArguments({@required this.threads});

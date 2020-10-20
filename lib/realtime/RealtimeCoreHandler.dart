@@ -5,7 +5,7 @@ import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/realtime/RXRealtime.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
-import 'package:flutter_chat_demo/realtime/parse_to_listdata.dart';
+import 'package:flutter_chat_demo/realtime/rx/parse_to_listdata.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'Ref.dart';

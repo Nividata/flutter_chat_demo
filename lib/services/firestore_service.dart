@@ -8,12 +8,10 @@ import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
-import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/transformers.dart';
 import 'package:tuple/tuple.dart';
 
-@lazySingleton
 class FirestoreService implements Repository {
   AuthenticationService _authenticationService;
 

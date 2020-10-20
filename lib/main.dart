@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
 import 'package:flutter_chat_demo/realtime/RealtimeService.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
 import 'app/locator.dart';
-import 'app/router.gr.dart';
 import 'main_view_model.dart';
 
 void main() async {
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute:
             model.isLoggedIn ? Routes.currentChatView : Routes.signInView,
-        onGenerateRoute: Router(),
+        onGenerateRoute: Router1(),
         navigatorKey: locator<NavigationService>().navigatorKey,
       ),
     );

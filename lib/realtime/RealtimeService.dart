@@ -7,6 +7,5 @@ class RealtimeService extends FirebaseService {
   RealtimeService() {
     core = RealtimeCoreHandler();
     chat = RealtimeChatHandler();
-    print("ok1 ${core.toString()} ${chat.toString()}");
   }
 }
