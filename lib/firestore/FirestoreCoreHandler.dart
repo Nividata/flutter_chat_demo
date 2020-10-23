@@ -18,10 +18,11 @@ class FirestoreCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<UserKey>> getAllUserList(Path path) {
+  Stream<List<UserKey>> getAllUserList(Path path, String uid) {
     return RxFirestore()
         .getByQuery(Ref.collection(Paths.usersPath()))
         .parseToListOfListData()
+        .where((event) => event.id != uid)
         .map((event) => UserKey(key: event.id, user: User.fromJson(event.data)))
         .toList()
         .asStream();

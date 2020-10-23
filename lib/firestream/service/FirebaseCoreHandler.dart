@@ -5,7 +5,7 @@ import 'package:flutter_chat_demo/user/entity/user.dart';
 abstract class FirebaseCoreHandler {
   Stream<void> addUsers(Path path, User user);
 
-  Stream<List<UserKey>> getAllUserList(Path path);
+  Stream<List<UserKey>> getAllUserList(Path path,String uid);
 
   Stream<List<ThreadKey>> getAllActiveChatUserList(Path path);
 

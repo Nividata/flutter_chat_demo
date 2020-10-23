@@ -42,7 +42,9 @@ class FireStream {
   }
 
   Stream<List<UserKey>> getAllUserList() {
-    return getFirebaseService().core.getAllUserList(Paths.usersPath());
+    return getFirebaseService()
+        .core
+        .getAllUserList(Paths.usersPath(), firebaseUser.uid);
   }
 
   Stream<List<ThreadKey>> getAllActiveChatUserList() {

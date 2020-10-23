@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
+import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
@@ -14,7 +15,7 @@ class TestViewModel extends BaseViewModel {
   static List userDate1 = [
     "1234512345",
     "123456",
-    "mehul makwana",
+    "mehul makwana1",
     "www.mehul.com"
   ];
 
@@ -27,13 +28,33 @@ class TestViewModel extends BaseViewModel {
 
   static List userDate = userDate1;
 
-  TestViewModel() {
-    // createUserAccount(userDate);
-  }
-
   SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
   AuthenticationService _authenticationService =
       locator<AuthenticationService>();
+
+  TestViewModel() {
+    // createUserAccount(userDate);
+    getAllUserList();
+  }
+
+  getAllUserList() {
+    FireStream.shared().getAllUserList().listen((List<UserKey> list) {
+      notifyListeners();
+      print(list.length);
+    }, onError: (e) {
+      print(e);
+    });
+  }
+
+  getActiveChatList() {
+    FireStream.shared().getAllActiveChatUserList().listen(
+        (List<ThreadKey> list) {
+      print(list.length);
+      notifyListeners();
+    }, onError: (e) {
+      print(e);
+    });
+  }
 
   createUserAccount(List userDate) {
     _authenticationService

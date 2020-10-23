@@ -17,10 +17,11 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<UserKey>> getAllUserList(Path path) {
+  Stream<List<UserKey>> getAllUserList(Path path, String uid) {
     return RXRealtime()
         .get(Ref.get(path))
         .parseToListOfListData()
+        .where((event) => event.id != uid)
         .map((event) => UserKey(key: event.id, user: User.fromJson(event.data)))
         .toList()
         .asStream();
@@ -35,8 +36,8 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
                 .get(query.equalTo(value.key))
                 .parseToListOfListData()
                 .map((event) {
-      print(ThreadKey.fromJson(event.id, event.data).toJson());
-      return ThreadKey.fromJson(event.id, event.data);
+              print(ThreadKey.fromJson(event.id, event.data).toJson());
+              return ThreadKey.fromJson(event.id, event.data);
             }))
         .toList()
         .asStream();
