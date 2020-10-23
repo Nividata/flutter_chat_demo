@@ -16,6 +16,10 @@ class RxFirestore {
     return Stream.fromFuture(ref.add(data));
   }
 
+  Stream<void> set(DocumentReference ref, dynamic data) {
+    return Stream.fromFuture(ref.setData(data));
+  }
+
   Stream<void> delete(DocumentReference ref) {
     return Stream.fromFuture(ref.delete());
   }
