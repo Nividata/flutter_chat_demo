@@ -20,7 +20,7 @@ class UserKey {
 class User {
   final String name, avatarUrl;
   final Map<String, dynamic> extras;
-  final List<MsgKey> msgKey;
+   List<MsgKey> msgKey;
 
   User({
     @required this.name,

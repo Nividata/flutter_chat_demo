@@ -1,15 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_chat_demo/realtime/model/DocumentChange1.dart';
 
 class RxFirestore {
   Stream<DocumentSnapshot> on(DocumentReference ref) {
     return ref.snapshots();
   }
 
-  Stream<DocumentChange> onByQuery(Query ref) {
+  Stream<DocumentChange2> onByQuery(Query ref) {
     return ref
-        .snapshots()
-        .map((event) => event.documentChanges)
-        .expand((element) => element);
+            .snapshots()
+            .map((event) => event.documentChanges)
+            .expand((element) => element)
+            .map((res) {
+      // ignore: missing_return
+      if (res.type == DocumentChangeType.added) {
+        return DocumentChange2(res.document, type: EventType.Added);
+      } else if (res.type == DocumentChangeType.modified) {
+        return DocumentChange2(res.document, type: EventType.Removed);
+      } else if (res.type == DocumentChangeType.removed) {
+        return DocumentChange2(res.document, type: EventType.Modified);
+      }
+    })
+        /*.map((event) => event.documentChanges)
+        .expand((element) => element)*/
+        ;
   }
 
   Stream<void> add(CollectionReference ref, dynamic data) {

@@ -18,9 +18,9 @@ import 'package:tuple/tuple.dart';
 import 'app/locator.dart';
 import 'main_view_model.dart';
 
-void main1() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FireStream().initialize(RealtimeService());
+  FireStream().initialize(FirestoreService());
   Fimber.plantTree(DebugTree(useColors: true));
   await setupLocator();
   runApp(MyApp());
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void main() async {
+void main1() async {
   WidgetsFlutterBinding.ensureInitialized();
   Fimber.plantTree(DebugTree(useColors: true));
   FireStream().initialize(FirestoreService());

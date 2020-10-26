@@ -41,7 +41,7 @@ class SignInViewModel extends BaseViewModel {
     "www.chetan.com"
   ];
 
-  static List userDate = userDate1;
+  static List userDate = userDate2;
 
   final BehaviorSubject _phoneNumberController =
       BehaviorSubject<String>.seeded(userDate[0]);

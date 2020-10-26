@@ -3,14 +3,14 @@ import 'dart:collection';
 
 import 'package:fimber/fimber.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_chat_demo/realtime/model/DocumentChange.dart';
+import 'package:flutter_chat_demo/realtime/model/DocumentChange1.dart';
 import 'package:flutter_chat_demo/realtime/model/ListData.dart';
 import 'package:optional/optional.dart';
 import 'package:optional/optional_internal.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/transformers.dart';
 
-extension ValidationExtension on Stream<Optional<DocumentChange>> {
+extension ValidationExtension on Stream<Optional<DocumentChange1>> {
   Stream<ListData> parseToListOfListData() {
     return this
         .map((event) {
@@ -50,7 +50,7 @@ extension ValidationExtension on Stream<Optional<DocumentChange>> {
   }*/
 }
 
-extension ValidationExtension1 on Stream<DocumentChange> {
+extension ValidationExtension1 on Stream<DocumentChange1> {
   Stream<ListData> parseToListData() {
     return this.flatMap(
         (value) => Stream.value(value.snapshot).map((DataSnapshot snapshot) {

@@ -45,6 +45,10 @@ class AuthenticationService {
     return Stream.fromFuture(_auth.signInWithCredential(credential));
   }
 
+  Stream<void> logout() {
+    return Stream.fromFuture(_auth.signOut());
+  }
+
   handleError(PlatformException error) {
     print(error);
     switch (error.code) {

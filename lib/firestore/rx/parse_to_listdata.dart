@@ -4,7 +4,7 @@ import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_chat_demo/realtime/model/DocumentChange.dart';
+import 'package:flutter_chat_demo/realtime/model/DocumentChange1.dart';
 import 'package:flutter_chat_demo/realtime/model/ListData.dart';
 import 'package:optional/optional.dart';
 import 'package:optional/optional_internal.dart';
@@ -57,6 +57,17 @@ extension ValidationExtension2 on Stream<DocumentSnapshot> {
         Stream.value(value).map((DocumentSnapshot snapshot) {
           Fimber.e(
               "DocumentSnapshot  ${snapshot.documentID}" "${snapshot.data}");
+          return ListData(snapshot.documentID, snapshot.data);
+        }));
+  }
+}
+
+extension ValidationExtension3 on Stream<DocumentChange2> {
+  Stream<ListData> parseToListData1() {
+    return this.flatMap((value) =>
+        Stream.value(value.snapshot).map((DocumentSnapshot snapshot) {
+          Fimber.e("DocumentSnapshot  ${snapshot.documentID}"
+              "${snapshot.data}");
           return ListData(snapshot.documentID, snapshot.data);
         }));
   }
