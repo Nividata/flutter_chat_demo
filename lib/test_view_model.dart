@@ -11,7 +11,7 @@ import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
 import 'package:tuple/tuple.dart';
-import 'package:flutter_chat_demo/firestore/rx/parse_to_listdata.dart';
+import 'package:flutter_chat_demo/firestore/rx/Extension.dart';
 
 import 'app/locator.dart';
 import 'firestore/Ref.dart';
@@ -64,7 +64,8 @@ class TestViewModel extends BaseViewModel {
 
   getAllUserList() {
     FireStream.shared().getAllUserList().listen((List<UserKey> list) {
-      createThreadByUser(list[0]);
+      print("${list.length}");
+      // createThreadByUser(list[0]);
     }, onError: (e) {
       print(e);
     });

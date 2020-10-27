@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter_chat_demo/realtime/model/DocumentChange1.dart';
+import 'package:optional/optional.dart';
 
 class RxFirestore {
   Stream<DocumentSnapshot> on(DocumentReference ref) {
@@ -12,7 +14,6 @@ class RxFirestore {
             .map((event) => event.documentChanges)
             .expand((element) => element)
             .map((res) {
-      // ignore: missing_return
       if (res.type == DocumentChangeType.added) {
         return DocumentChange2(res.document, type: EventType.Added);
       } else if (res.type == DocumentChangeType.modified) {
@@ -43,6 +44,14 @@ class RxFirestore {
   }
 
   Stream<QuerySnapshot> getByQuery(Query query) {
-    return Stream.fromFuture(query.getDocuments());
+    return Stream.fromFuture(query.getDocuments()).map((event) {
+      Fimber.e("${event == null}");
+      return event;
+    });
+  }
+
+  Stream<Optional<QuerySnapshot>> getByQuery2(Query query) {
+    return Stream.fromFuture(query.getDocuments())
+        .map((event) => Optional.ofNullable(event));
   }
 }

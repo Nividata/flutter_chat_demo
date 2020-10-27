@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fimber/fimber.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/realtime/model/DocumentChange1.dart';
 import 'package:flutter_chat_demo/realtime/model/ListData.dart';
 import 'package:optional/optional.dart';
@@ -96,5 +94,56 @@ extension ValidationExtension1 on Stream<QuerySnapshot> {
       Fimber.e("${event.toString()}");
       return event;
     }).expand((element) => element);
+  }
+}
+
+extension ValidationExtension4 on Stream<Optional<QuerySnapshot>> {
+  Stream<Optional<List<ListData>>> parseToListOfListData4() {
+    return this.map((event) => event
+        .filter((q) => q.documents.isNotEmpty)
+        .map((e) => e.documents)
+        .expand((element) => element)
+        .map((event) {
+          Fimber.e("ListData  ${event.documentID}" "${event.data}");
+          return ListData(event.documentID, event.data);
+        })
+        .toList()
+        .toOptional);
+
+    /* return this.map((optional) {
+      if (optional.isPresent && optional.value.documents.isNotEmpty) {
+        return optional.value.documents
+            .map((event) {
+          Fimber.e("ListData  ${event.documentID}" "${event.data}");
+          return ListData(event.documentID, event.data);
+        })
+            .toList()
+            .toOptional;
+      } else {
+        return Optional.empty().cast<List<ListData>>();
+      }
+    });*/
+
+    /*  return this.map((QuerySnapshot snapshot) {
+      return snapshot.documents;
+    }).flatMap((value) {
+      Fimber.e("QuerySnapshot  ${value.length}");
+      if (value.isNotEmpty) {
+        return Stream.value(value)
+            .expand((element) => element)
+            .map((event) {
+              Fimber.e("ListData  ${event.documentID}" "${event.data}");
+              return ListData(event.documentID, event.data);
+            })
+            .toList()
+            .asStream()
+            .map((event) => event);
+      } else {
+        return Stream.value(List<ListData>());
+      }
+    }).map((event) {
+      Fimber.e("${event.toString()}");
+      return event;
+    }).expand((element) => element);*/
   }
 }

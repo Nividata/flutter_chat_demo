@@ -8,7 +8,7 @@ import 'package:flutter_chat_demo/models/response/Message.dart';
 import 'package:flutter_chat_demo/models/response/Threads.dart';
 import 'package:flutter_chat_demo/realtime/RXRealtime.dart';
 import 'package:flutter_chat_demo/realtime/Ref.dart';
-import 'package:flutter_chat_demo/realtime/rx/parse_to_listdata.dart';
+import 'package:flutter_chat_demo/realtime/rx/Extension.dart';
 import 'package:flutter_chat_demo/user/entity/user.dart';
 import 'package:rxdart/rxdart.dart';
 

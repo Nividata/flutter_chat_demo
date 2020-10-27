@@ -34,20 +34,6 @@ extension ValidationExtension on Stream<Optional<DocumentChange1>> {
             .asStream())
         .expand((element) => element);
   }
-
-/*Stream<ListData> parseToListData() {
-    return this.map((event) {
-      return event.value.snapshot;
-    }).map((DataSnapshot snapshot) {
-      print(snapshot.runtimeType);
-      print(snapshot.value);
-      print(snapshot.key);
-      return (snapshot.value as LinkedHashMap<dynamic, dynamic>).entries;
-    }).map((event) {
-      print("UserKey  ${event.key}" "${event.value}");
-      return ListData(event.key, event.value);
-    });
-  }*/
 }
 
 extension ValidationExtension1 on Stream<DocumentChange1> {
