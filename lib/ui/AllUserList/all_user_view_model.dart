@@ -1,7 +1,7 @@
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
-import 'package:flutter_chat_demo/models/response/Message.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Message.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 
 abstract class FirebaseChatHandler {
   Stream<UserKey> currentUserData(Path path);

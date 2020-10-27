@@ -3,13 +3,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseChatHandler.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
-import 'package:flutter_chat_demo/models/response/FbMessage.dart';
-import 'package:flutter_chat_demo/models/response/Message.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/FbMessage.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Message.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
 import 'package:flutter_chat_demo/realtime/RXRealtime.dart';
 import 'package:flutter_chat_demo/realtime/Ref.dart';
 import 'package:flutter_chat_demo/realtime/rx/Extension.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 import 'package:rxdart/rxdart.dart';
 
 class RealtimeChatHandler extends FirebaseChatHandler {

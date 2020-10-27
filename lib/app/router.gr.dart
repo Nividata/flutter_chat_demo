@@ -9,7 +9,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import '../models/response/Threads.dart';
+import '../firestream/Chat/Threads.dart';
 import '../ui/AllUserList/all_user_view.dart';
 import '../ui/chat/chat_view.dart';
 import '../ui/currentChat/current_chat_view.dart';

@@ -8,7 +8,7 @@ import 'package:flutter_chat_demo/realtime/RealtimeService.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
 import 'package:flutter_chat_demo/test_view_model.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 import 'package:flutter_chat_demo/utility/PreferencesUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';

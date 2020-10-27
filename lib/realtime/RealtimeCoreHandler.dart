@@ -1,10 +1,11 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_chat_demo/firestream/Chat/UserThread.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseCoreHandler.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
 import 'package:flutter_chat_demo/realtime/RXRealtime.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 import 'package:flutter_chat_demo/realtime/rx/Extension.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -44,7 +45,7 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<MsgKey>> getUserMessageThreadList(Path path) {
+  Stream<List<UserThreadKey>> getUserMessageThreadList(Path path) {
     print(path.toString());
     return RXRealtime()
         .get(Ref.get(path))
@@ -54,8 +55,8 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
         })
         .parseToListOfListData()
         .map((event) {
-          print(MsgKey(key: event.id, msg: Msg.fromJson(event.data)).toJson());
-          return MsgKey(key: event.id, msg: Msg.fromJson(event.data));
+          print(UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data)).toJson());
+          return UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data));
         })
         .toList()
         .asStream();

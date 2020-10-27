@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/firestore/Ref.dart';
+import 'package:flutter_chat_demo/firestream/Chat/UserThread.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseCoreHandler.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 import 'package:flutter_chat_demo/firestore/rx/Extension.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -32,7 +33,7 @@ class FirestoreCoreHandler extends FirebaseCoreHandler {
   Stream<List<ThreadKey>> getAllActiveChatUserList(Path path) {
     return getUserMessageThreadList(Paths.messagesPath())
         .expand((element) => element)
-        .transform(FlatMapStreamTransformer((MsgKey x) => RxFirestore()
+        .transform(FlatMapStreamTransformer((UserThreadKey x) => RxFirestore()
                 .getByQuery(Ref.collection(Paths.chatsPath())
                     .where(FieldPath.documentId, isEqualTo: x.key))
                 .parseToListOfListData()
@@ -44,7 +45,7 @@ class FirestoreCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<MsgKey>> getUserMessageThreadList(Path path) {
+  Stream<List<UserThreadKey>> getUserMessageThreadList(Path path) {
     return RxFirestore()
         .getByQuery(Ref.collection(Paths.messagesPath()))
         .map((event) {
@@ -53,8 +54,8 @@ class FirestoreCoreHandler extends FirebaseCoreHandler {
         })
         .parseToListOfListData()
         .map((event) {
-          print(MsgKey(key: event.id, msg: Msg.fromJson(event.data)).toJson());
-          return MsgKey(key: event.id, msg: Msg.fromJson(event.data));
+          print(UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data)).toJson());
+          return UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data));
         })
         .toList()
         .asStream();

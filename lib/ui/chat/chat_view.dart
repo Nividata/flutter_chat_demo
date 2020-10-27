@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_demo/models/response/Message.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Message.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
 import 'package:flutter_chat_demo/utility/app_colors.dart';
 import 'package:stacked/stacked.dart';
 import 'chat_view_model.dart';

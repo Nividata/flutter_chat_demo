@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter_chat_demo/firestream/Chat/UserThread.dart';
 import 'package:meta/meta.dart';
 
 class UserKey {
@@ -20,7 +21,7 @@ class UserKey {
 class User {
   final String name, avatarUrl;
   final Map<String, dynamic> extras;
-   List<MsgKey> msgKey;
+   List<UserThreadKey> msgKey;
 
   User({
     @required this.name,
@@ -37,7 +38,7 @@ class User {
         msgKey: json.containsKey('message')
             ? (json['message'] as LinkedHashMap<dynamic, dynamic>)
                 .entries
-                .map((e) => MsgKey.fromJson(e.key, e.value))
+                .map((e) => UserThreadKey.fromJson(e.key, e.value))
                 .toList()
             : []);
   }
@@ -47,34 +48,5 @@ class User {
         'avatar_url': avatarUrl ?? "",
         'extras': extras ?? {},
         'message': msgKey != null ? msgKey.map((e) => e.toJson()).join(",") : {}
-      };
-}
-
-class MsgKey {
-  final Msg msg;
-  final String key;
-
-  MsgKey({this.msg, this.key});
-
-  factory MsgKey.fromJson(String key, Map<dynamic, dynamic> json) {
-    return MsgKey(key: key, msg: Msg.fromJson(json));
-  }
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        key: msg.toJson(),
-      };
-}
-
-class Msg {
-  final String owner;
-
-  Msg({this.owner});
-
-  factory Msg.fromJson(Map<dynamic, dynamic> json) {
-    return Msg(owner: json['owner'] as String);
-  }
-
-  Map<String, dynamic> toJson() => <String, dynamic>{
-        'owner': owner,
       };
 }

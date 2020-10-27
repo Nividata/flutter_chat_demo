@@ -1,4 +1,4 @@
-import 'package:flutter_chat_demo/models/response/FbMessage.dart';
+import 'package:flutter_chat_demo/firestream/Chat/FbMessage.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()

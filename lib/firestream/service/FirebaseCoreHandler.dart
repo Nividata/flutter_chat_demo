@@ -1,6 +1,7 @@
+import 'package:flutter_chat_demo/firestream/Chat/UserThread.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 
 abstract class FirebaseCoreHandler {
   Stream<void> addUsers(Path path, User user);
@@ -9,7 +10,7 @@ abstract class FirebaseCoreHandler {
 
   Stream<List<ThreadKey>> getAllActiveChatUserList(Path path);
 
-  Stream<List<MsgKey>> getUserMessageThreadList(Path path);
+  Stream<List<UserThreadKey>> getUserMessageThreadList(Path path);
 
   Stream<void> updateUsers(String path, Map<String, dynamic> data);
 

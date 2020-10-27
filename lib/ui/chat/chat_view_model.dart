@@ -1,7 +1,7 @@
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
-import 'package:flutter_chat_demo/models/response/Message.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Message.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';

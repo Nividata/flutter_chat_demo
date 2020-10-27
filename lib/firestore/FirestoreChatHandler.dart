@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter_chat_demo/firestore/Ref.dart';
 import 'package:flutter_chat_demo/firestore/RxFirestore.dart';
+import 'package:flutter_chat_demo/firestream/Chat/UserThread.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseChatHandler.dart';
 import 'package:flutter_chat_demo/firestream/utility/Path.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
-import 'package:flutter_chat_demo/models/response/FbMessage.dart';
-import 'package:flutter_chat_demo/models/response/Message.dart';
-import 'package:flutter_chat_demo/models/response/Threads.dart';
+import 'package:flutter_chat_demo/firestream/Chat/FbMessage.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Message.dart';
+import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
 import 'package:flutter_chat_demo/firestore/rx/Extension.dart';
-import 'package:flutter_chat_demo/user/entity/user.dart';
+import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:tuple/tuple.dart';
 
@@ -23,11 +24,11 @@ class FirestoreChatHandler extends FirebaseChatHandler {
         .flatMap((value) => RxFirestore()
             .getByQuery(Ref.collection(Paths.messagesPath()))
             .parseToListOfListData()
-            .map((event) => MsgKey.fromJson(event.id, event.data))
+            .map((event) => UserThreadKey.fromJson(event.id, event.data))
             .toList()
             .asStream()
             .map((event) => Tuple2(value, event)))
-        .map((Tuple2<UserKey, List<MsgKey>> event) {
+        .map((Tuple2<UserKey, List<UserThreadKey>> event) {
       event.item1.user.msgKey = event.item2;
       return event.item1;
     });
@@ -69,7 +70,6 @@ class FirestoreChatHandler extends FirebaseChatHandler {
               return otherUser.user.msgKey.map((e) => e.key).contains(event);
             }).defaultIfEmpty(""))
         .flatMap((String value) {
-      Fimber.e("createThreadByUser $value");
       if (value.isEmpty) {
         return createMessageThread(
             Paths.messagesPath(), "oneToOne", otherUser, uid);
