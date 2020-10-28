@@ -16,11 +16,11 @@ import 'package:tuple/tuple.dart';
 
 class FirestoreChatHandler extends FirebaseChatHandler {
   @override
-  Stream<UserKey> currentUserData(Path path) {
+  Stream<User> currentUserData(Path path) {
     return RxFirestore()
         .get(Ref.document(Paths.userPath()))
         .parseToListData()
-        .map((event) => UserKey.fromJson(event.id, event.data))
+        .map((event) => User.fromListData(event))
         .flatMap((value) => RxFirestore()
             .getByQuery(Ref.collection(Paths.messagesPath()))
             .parseToListOfListData()
@@ -28,8 +28,8 @@ class FirestoreChatHandler extends FirebaseChatHandler {
             .toList()
             .asStream()
             .map((event) => Tuple2(value, event)))
-        .map((Tuple2<UserKey, List<UserThreadKey>> event) {
-      event.item1.user.msgKey = event.item2;
+        .map((Tuple2<User, List<UserThreadKey>> event) {
+      event.item1.userThread = event.item2;
       return event.item1;
     });
   }
@@ -59,15 +59,15 @@ class FirestoreChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<ThreadKey> createThreadByUser(UserKey otherUser, String uid) {
-    return currentUserData(Paths.userPathByUid(otherUser.key))
-        .flatMap((UserKey otherUser) => currentUserData(Paths.userPath())
-                .map((UserKey currentUser) => currentUser.user.msgKey)
+  Stream<ThreadKey> createThreadByUser(User otherUser, String uid) {
+    return currentUserData(Paths.userPathByUid(otherUser.id))
+        .flatMap((User otherUser) => currentUserData(Paths.userPath())
+                .map((User currentUser) => currentUser.userThread)
                 .expand((element) => element)
                 .map((event) => event.key)
                 .where((event) {
-              print(otherUser.user.msgKey.map((e) => e.key).contains(event));
-              return otherUser.user.msgKey.map((e) => e.key).contains(event);
+              print(otherUser.userThread.map((e) => e.key).contains(event));
+              return otherUser.userThread.map((e) => e.key).contains(event);
             }).defaultIfEmpty(""))
         .flatMap((String value) {
       if (value.isEmpty) {
@@ -94,7 +94,7 @@ class FirestoreChatHandler extends FirebaseChatHandler {
 
   @override
   Stream<ThreadKey> createMessageThread(
-      Path path, String name, UserKey otherUser, String uid) {
+      Path path, String name, User otherUser, String uid) {
     String key = Ref.collection(path).document().documentID;
     Fimber.e(Ref.collection(path).document().documentID);
 
@@ -102,8 +102,8 @@ class FirestoreChatHandler extends FirebaseChatHandler {
       RxFirestore()
           .set(Ref.document(Paths.messagePath(key)), {"owner": "$uid"}),
       RxFirestore().set(
-          Ref.document(Paths.messagePathByUid(otherUser.key, key)),
-          {"owner": "${otherUser.key}"}),
+          Ref.document(Paths.messagePathByUid(otherUser.id, key)),
+          {"owner": "${otherUser.id}"}),
       RxFirestore().set(Ref.document(Paths.chatPath(key)),
           Thread(name: name, type: "oneToOne", owner: uid).toJson())
     ], (List<void> b) {

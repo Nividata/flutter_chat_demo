@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
+import 'package:flutter_chat_demo/firestream/utility/Keys.dart';
 import 'package:flutter_chat_demo/firestream/utility/Paths.dart';
 import 'package:flutter_chat_demo/firestream/Chat/Message.dart';
 import 'package:flutter_chat_demo/firestream/Chat/Threads.dart';
@@ -33,16 +34,17 @@ class TestViewModel extends BaseViewModel {
     "www.chetan.com"
   ];
 
-  static List userDate = userDate2;
+  static List userDate = userDate1;
 
   SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
   AuthenticationService _authenticationService =
-      locator<AuthenticationService>();
+  locator<AuthenticationService>();
 
   TestViewModel() {
     // createUserAccount(userDate);
     getAllUserList();
     // getActiveChatList();
+    // createUserAccount(userDate);
   }
 
   getChatMessageList(ThreadKey _threads) {
@@ -53,7 +55,7 @@ class TestViewModel extends BaseViewModel {
     });
   }
 
-  createThreadByUser(UserKey userKey) {
+  createThreadByUser(User userKey) {
     FireStream.shared().createThreadByUser(userKey).listen((event) {
       getChatMessageList(event);
       print("onChatSelect ${event.toJson()}");
@@ -63,7 +65,7 @@ class TestViewModel extends BaseViewModel {
   }
 
   getAllUserList() {
-    FireStream.shared().getAllUserList().listen((List<UserKey> list) {
+    FireStream.shared().getAllUserList().listen((List<User> list) {
       print("${list.length}");
       // createThreadByUser(list[0]);
     }, onError: (e) {
@@ -82,10 +84,11 @@ class TestViewModel extends BaseViewModel {
   createUserAccount(List userDate) {
     _authenticationService
         .logout()
-        .flatMap((value) => _authenticationService
-                .sendOtp(userDate[0])
-                .transform(
-                    FlatMapStreamTransformer((Tuple2<String, dynamic> tuple2) {
+        .flatMap((value) =>
+        _authenticationService
+            .sendOtp(userDate[0])
+            .transform(
+            FlatMapStreamTransformer((Tuple2<String, dynamic> tuple2) {
               if (tuple2.item1 == "Auto_verify") {
                 return _authenticationService
                     .autoVerify(tuple2.item2 as AuthCredential);
@@ -95,9 +98,10 @@ class TestViewModel extends BaseViewModel {
               }
             })))
         .listen((AuthResult authResult) {
-      FireStream.shared()
-          .addUsers(User(name: userDate[2], avatarUrl: userDate[3]))
-          .listen((event) {
+      User user = User(name: userDate[2]);
+      user.setPictureUrl(userDate[3]);
+      user.setMeta({Keys.phone: authResult.user.phoneNumber});
+      FireStream.shared().addUsers(user).listen((event) {
         _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         print("Account created");
       }, onError: (e) {

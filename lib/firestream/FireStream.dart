@@ -41,7 +41,7 @@ class FireStream {
     return getFirebaseService().core.addUsers(Paths.userPath(), user);
   }
 
-  Stream<List<UserKey>> getAllUserList() {
+  Stream<List<User>> getAllUserList() {
     return getFirebaseService()
         .core
         .getAllUserList(Paths.usersPath(), firebaseUser.uid);
@@ -53,7 +53,7 @@ class FireStream {
         .getAllActiveChatUserList(Paths.chatsPath());
   }
 
-  Stream<ThreadKey> createThreadByUser(UserKey otherUser) {
+  Stream<ThreadKey> createThreadByUser(User otherUser) {
     return getFirebaseService()
         .chat
         .createThreadByUser(otherUser, firebaseUser.uid);
@@ -74,5 +74,9 @@ class FireStream {
 
   String currentUserId() {
     return firebaseUser.uid;
+  }
+
+  Map<String, String> timestamp() {
+    return getFirebaseService().core.timestamp();
   }
 }

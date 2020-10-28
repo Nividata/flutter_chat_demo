@@ -20,7 +20,7 @@ class Paths {
   }
 
   static Path messagesPathByUid(String uid) {
-    return userPathByUid(uid).child(Keys.Messages);
+    return userPathByUid(uid).child(Keys.chats);
   }
 
   static Path messagesPath() {
@@ -28,7 +28,7 @@ class Paths {
   }
 
   static Path userChatsPath() {
-    return userPathByUid(currentUserId()).child(Keys.Chats);
+    return userPathByUid(currentUserId()).child(Keys.chats);
   }
 
   static Path userMutedPath() {
@@ -60,7 +60,7 @@ class Paths {
   }
 
   static Path chatsPath() {
-    return root().child(Keys.Chats);
+    return root().child(Keys.chats);
   }
 
   static Path chatPath(String chatId) {
@@ -68,15 +68,15 @@ class Paths {
   }
 
   static Path chatMetaPath(String chatId) {
-    return chatsPath().child(chatId).child(Keys.Meta);
+    return chatsPath().child(chatId).child(Keys.meta);
   }
 
   static Path chatMessagesPath(String chatId) {
-    return chatPath(chatId).child(Keys.Messages);
+    return chatPath(chatId).child(Keys.chats);
   }
 
   static Path chatMessagePathByMessageId(String chatId){
-    return chatsPath().child(chatId).child(Keys.Meta);
+    return chatsPath().child(chatId).child(Keys.meta);
   }
 
   static Path chatUsersPath(String chatId) {

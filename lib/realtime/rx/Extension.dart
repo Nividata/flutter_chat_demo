@@ -49,11 +49,9 @@ extension ValidationExtension1 on Stream<DocumentChange1> {
     return this.map((event) {
       return event.snapshot;
     }).flatMap((value) {
-      Fimber.e("Snapshot  ${value.key}" "${value.value}");
       if (value.value != null) {
         return Stream.value(value)
             .map((DataSnapshot snapshot) {
-              Fimber.e("Snapshot  ${snapshot.key}" "${snapshot.value}");
               return (snapshot.value as LinkedHashMap<dynamic, dynamic>)
                   .entries;
             })
@@ -61,7 +59,6 @@ extension ValidationExtension1 on Stream<DocumentChange1> {
               return element;
             })
             .map((event) {
-              Fimber.e("ListData  ${event.key}" "${event.value}");
               return ListData(event.key, event.value);
             })
             .toList()

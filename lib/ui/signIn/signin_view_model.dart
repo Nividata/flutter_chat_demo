@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_chat_demo/app/locator.dart';
 import 'package:flutter_chat_demo/app/router.gr.dart';
 import 'package:flutter_chat_demo/firestream/FireStream.dart';
+import 'package:flutter_chat_demo/firestream/utility/Keys.dart';
 import 'package:flutter_chat_demo/services/authentication_service.dart';
 import 'package:flutter_chat_demo/services/shared_preferences_service.dart';
 import 'package:flutter_chat_demo/firestream/Chat/user.dart';
@@ -72,9 +73,10 @@ class SignInViewModel extends BaseViewModel {
   onOtpVerify(String otp) {
     _authenticationService.verifyOtp(_verificationId, otp).listen(
         (AuthResult authResult) {
-      FireStream.shared()
-          .addUsers(User(name: userDate[2], avatarUrl: userDate[3]))
-          .listen((event) {
+      User user = User(name: userDate[2]);
+      user.setPictureUrl(userDate[3]);
+      user.setMeta({Keys.phone: authResult.user.phoneNumber});
+      FireStream.shared().addUsers(user).listen((event) {
         _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {
@@ -88,9 +90,10 @@ class SignInViewModel extends BaseViewModel {
   onAutoOtpVerify(AuthCredential credential) {
     _authenticationService.autoVerify(credential).listen(
         (AuthResult authResult) {
-      FireStream.shared()
-          .addUsers(User(name: userDate[2], avatarUrl: userDate[3]))
-          .listen((event) {
+      User user = User(name: userDate[2]);
+      user.setPictureUrl(userDate[3]);
+      user.setMeta({Keys.phone: authResult.user.phoneNumber});
+      FireStream.shared().addUsers(user).listen((event) {
         _spPreferences.putString(PreferencesUtil.TOKEN, authResult.user.uid);
         _navigationService.replaceWith(Routes.currentChatView);
       }, onError: (e) {

@@ -11,10 +11,17 @@ class Keys {
   static String Data = "data";
 
   static String Users = "users";
-  static String Messages = "message";
   static String Contacts = "contacts";
   static String Blocked = "blocked";
-  static String Chats = "threads";
-  static String Meta = "meta";
+  static String chats = "threads";
+  static String meta = "meta";
   static String Muted = "muted";
+
+  static String lastOnline = "last-online";
+  static String availability = "availability";
+  static String email = "email";
+  static String name = "name";
+  static String nameLowercase = "name-lowercase";
+  static String phone = "phone";
+  static String pictureURL = "pictureURL";
 }

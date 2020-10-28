@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_demo/firestream/Chat/UserThread.dart';
 import 'package:flutter_chat_demo/firestream/service/FirebaseCoreHandler.dart';
@@ -18,12 +19,12 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<UserKey>> getAllUserList(Path path, String uid) {
+  Stream<List<User>> getAllUserList(Path path, String uid) {
     return RXRealtime()
         .get(Ref.get(path))
         .parseToListOfListData()
         .where((event) => event.id != uid)
-        .map((event) => UserKey(key: event.id, user: User.fromJson(event.data)))
+        .map((event) => User.fromListData(event))
         .toList()
         .asStream();
   }
@@ -55,8 +56,11 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
         })
         .parseToListOfListData()
         .map((event) {
-          print(UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data)).toJson());
-          return UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data));
+          print(
+              UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data))
+                  .toJson());
+          return UserThreadKey(
+              key: event.id, msg: UserThread.fromJson(event.data));
         })
         .toList()
         .asStream();

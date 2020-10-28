@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Fimber.plantTree(DebugTree(useColors: true));
-  FireStream().initialize(FirestoreService());
+  FireStream().initialize(RealtimeService());
   await setupLocator();
   runApp(MyApp1());
 }

@@ -12,12 +12,12 @@ class AllUserViewModel extends BaseViewModel {
     getActiveChatList();
   }
 
-  List<UserKey> _currentChatList = List();
+  List<User> _currentChatList = List();
 
-  List<UserKey> get currentChatList => _currentChatList;
+  List<User> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    FireStream.shared().getAllUserList().listen((List<UserKey> list) {
+    FireStream.shared().getAllUserList().listen((List<User> list) {
       _currentChatList.addAll(list);
       notifyListeners();
       print(list.length);

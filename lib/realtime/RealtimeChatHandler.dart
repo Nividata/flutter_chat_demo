@@ -14,11 +14,10 @@ import 'package:rxdart/rxdart.dart';
 
 class RealtimeChatHandler extends FirebaseChatHandler {
   @override
-  Stream<UserKey> currentUserData(Path path) {
+  Stream<User> currentUserData(Path path) {
     return RXRealtime().get(Ref.get(path)).parseToListData().map((event) {
-      print(
-          "currentUserData ${UserKey.fromJson(event.id, event.data).toJson()}");
-      return UserKey.fromJson(event.id, event.data);
+      print("currentUserData ${User.fromListData(event).toJson()}");
+      return User.fromListData(event);
     });
   }
 
@@ -32,8 +31,8 @@ class RealtimeChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<Message> sendMessage(Path path, ThreadKey threads, Message message,
-      String uid) {
+  Stream<Message> sendMessage(
+      Path path, ThreadKey threads, Message message, String uid) {
     message.from = uid;
     message.isMe = true;
     String key = Ref.get(path).push().key;
@@ -43,13 +42,13 @@ class RealtimeChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<ThreadKey> createThreadByUser(UserKey otherUser, String uid) {
+  Stream<ThreadKey> createThreadByUser(User otherUser, String uid) {
     return currentUserData(Paths.userPath())
-        .map((UserKey currentUser) => currentUser.user.msgKey)
+        .map((User currentUser) => currentUser.userThread)
         .expand((element) => element)
         .map((event) => event.key)
         .where(
-            (event) => otherUser.user.msgKey.map((e) => e.key).contains(event))
+            (event) => otherUser.userThread.map((e) => e.key).contains(event))
         .defaultIfEmpty("")
         .flatMap((value) {
       if (value.isEmpty) {
@@ -72,17 +71,14 @@ class RealtimeChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<ThreadKey> createMessageThread(Path path, String name,
-      UserKey otherUser, String uid) {
-    String key = Ref
-        .get(path)
-        .push()
-        .key;
+  Stream<ThreadKey> createMessageThread(
+      Path path, String name, User otherUser, String uid) {
+    String key = Ref.get(path).push().key;
 
     return ZipStream([
       RXRealtime().add(Ref.get(Paths.messagePath(key)), {"owner": "$uid"}),
-      RXRealtime().add(Ref.get(Paths.messagePathByUid(otherUser.key, key)),
-          {"owner": "${otherUser.key}"}),
+      RXRealtime().add(Ref.get(Paths.messagePathByUid(otherUser.id, key)),
+          {"owner": "${otherUser.id}"}),
       RXRealtime().add(Ref.get(Paths.chatPath(key)),
           Thread(name: name, type: "oneToOne", owner: uid).toJson())
     ], (List<void> b) => b.length.toString()).flatMap((value) {
