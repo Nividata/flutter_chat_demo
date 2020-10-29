@@ -30,22 +30,22 @@ class FirestoreCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<ThreadKey>> getAllActiveChatUserList(Path path) {
+  Stream<List<Thread>> getAllActiveChatUserList(Path path) {
     return getUserMessageThreadList(Paths.messagesPath())
         .expand((element) => element)
-        .transform(FlatMapStreamTransformer((UserThreadKey x) => RxFirestore()
+        .transform(FlatMapStreamTransformer((UserThread x) => RxFirestore()
                 .getByQuery(Ref.collection(Paths.chatsPath())
-                    .where(FieldPath.documentId, isEqualTo: x.key))
+                    .where(FieldPath.documentId, isEqualTo: x.id))
                 .parseToListOfListData()
                 .map((event) {
-              return ThreadKey.fromJson(event.id, event.data);
+              return Thread.fromListData(event);
             })))
         .toList()
         .asStream();
   }
 
   @override
-  Stream<List<UserThreadKey>> getUserMessageThreadList(Path path) {
+  Stream<List<UserThread>> getUserMessageThreadList(Path path) {
     return RxFirestore()
         .getByQuery(Ref.collection(Paths.messagesPath()))
         .map((event) {
@@ -54,11 +54,8 @@ class FirestoreCoreHandler extends FirebaseCoreHandler {
         })
         .parseToListOfListData()
         .map((event) {
-          print(
-              UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data))
-                  .toJson());
-          return UserThreadKey(
-              key: event.id, msg: UserThread.fromJson(event.data));
+          print(UserThread.fromListData(event).toJson());
+          return UserThread.fromListData(event);
         })
         .toList()
         .asStream();

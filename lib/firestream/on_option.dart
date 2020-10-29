@@ -201,9 +201,8 @@ void main() {
         },
         onDone: () => print("OnDOne"),
       );*/
-
-  Stream.value(Optional.empty())
-      .onOptionReturn(Optional.of(12)).listen((event) {
+  Stream.value(Optional.empty()).onOptionReturn(Optional.of(12)).listen(
+      (event) {
     print("$event");
   }, onError: (e) {
     print(e);

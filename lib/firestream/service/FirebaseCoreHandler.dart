@@ -6,11 +6,11 @@ import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 abstract class FirebaseCoreHandler {
   Stream<void> addUsers(Path path, User user);
 
-  Stream<List<User>> getAllUserList(Path path,String uid);
+  Stream<List<User>> getAllUserList(Path path, String uid);
 
-  Stream<List<ThreadKey>> getAllActiveChatUserList(Path path);
+  Stream<List<Thread>> getAllActiveChatUserList(Path path);
 
-  Stream<List<UserThreadKey>> getUserMessageThreadList(Path path);
+  Stream<List<UserThread>> getUserMessageThreadList(Path path);
 
   Stream<void> updateUsers(String path, Map<String, dynamic> data);
 

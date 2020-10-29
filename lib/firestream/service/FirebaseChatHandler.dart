@@ -5,12 +5,12 @@ import 'package:flutter_chat_demo/firestream/Chat/user.dart';
 
 abstract class FirebaseChatHandler {
   Stream<User> currentUserData(Path path);
-  Stream<Message> listenOnChat(Path path, ThreadKey threads, String uid);
+  Stream<Message> listenOnChat(Path path, Thread threads, String uid);
 
   Stream<Message> sendMessage(
-      Path path, ThreadKey threads, Message message, String uid);
+      Path path, Thread threads, Message message, String uid);
 
-  Stream<ThreadKey> createThreadByUser( User otherUser,String uid);
-  Stream<ThreadKey> createMessageThread(Path path,String name, User otherUser,String uid);
-  Stream<ThreadKey> getThreadByMsgKey(Path path, String msgKey);
+  Stream<Thread> createThreadByUser( User otherUser,String uid);
+  Stream<Thread> createMessageThread(Path path,String name, User otherUser,String uid);
+  Stream<Thread> getThreadByMsgKey(Path path, String msgKey);
 }

@@ -24,18 +24,18 @@ class FirestoreChatHandler extends FirebaseChatHandler {
         .flatMap((value) => RxFirestore()
             .getByQuery(Ref.collection(Paths.messagesPath()))
             .parseToListOfListData()
-            .map((event) => UserThreadKey.fromJson(event.id, event.data))
+            .map((event) => UserThread.fromListData(event))
             .toList()
             .asStream()
             .map((event) => Tuple2(value, event)))
-        .map((Tuple2<User, List<UserThreadKey>> event) {
+        .map((Tuple2<User, List<UserThread>> event) {
       event.item1.userThread = event.item2;
       return event.item1;
     });
   }
 
   @override
-  Stream<Message> listenOnChat(Path path, ThreadKey threads, String uid) {
+  Stream<Message> listenOnChat(Path path, Thread threads, String uid) {
     Fimber.e("${path.toString()} ${uid} ${threads.toJson()}");
     return RxFirestore()
         .onByQuery(Ref.collection(path).limit(10))
@@ -46,12 +46,12 @@ class FirestoreChatHandler extends FirebaseChatHandler {
 
   @override
   Stream<Message> sendMessage(
-      Path path, ThreadKey threads, Message message, String uid) {
+      Path path, Thread threads, Message message, String uid) {
     message.from = uid;
     message.isMe = true;
     return RxFirestore()
         .add(
-            Ref.collection(Paths.chatMessagesPath(threads.key)),
+            Ref.collection(Paths.chatMessagesPath(threads.id)),
             Message(msgType: "text", time: "11:50", text: "hi")
                 .toFbMessage()
                 .toJson())
@@ -59,15 +59,15 @@ class FirestoreChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<ThreadKey> createThreadByUser(User otherUser, String uid) {
+  Stream<Thread> createThreadByUser(User otherUser, String uid) {
     return currentUserData(Paths.userPathByUid(otherUser.id))
         .flatMap((User otherUser) => currentUserData(Paths.userPath())
                 .map((User currentUser) => currentUser.userThread)
                 .expand((element) => element)
-                .map((event) => event.key)
+                .map((event) => event.id)
                 .where((event) {
-              print(otherUser.userThread.map((e) => e.key).contains(event));
-              return otherUser.userThread.map((e) => e.key).contains(event);
+              print(otherUser.userThread.map((e) => e.id).contains(event));
+              return otherUser.userThread.map((e) => e.id).contains(event);
             }).defaultIfEmpty(""))
         .flatMap((String value) {
       if (value.isEmpty) {
@@ -80,32 +80,33 @@ class FirestoreChatHandler extends FirebaseChatHandler {
   }
 
   @override
-  Stream<ThreadKey> getThreadByMsgKey(Path path, String msgKey) {
+  Stream<Thread> getThreadByMsgKey(Path path, String msgKey) {
     Fimber.e("${path.toString()} ${msgKey}");
     return RxFirestore()
         .getByQuery(
             Ref.collection(path).where(FieldPath.documentId, isEqualTo: msgKey))
         .parseToListOfListData()
         .map((event) {
-      Fimber.e("${ThreadKey.fromJson(event.id, event.data)}");
-      return ThreadKey.fromJson(event.id, event.data);
+      Fimber.e("${Thread.fromListData(event)}");
+      return Thread.fromListData(event);
     });
   }
 
   @override
-  Stream<ThreadKey> createMessageThread(
+  Stream<Thread> createMessageThread(
       Path path, String name, User otherUser, String uid) {
     String key = Ref.collection(path).document().documentID;
     Fimber.e(Ref.collection(path).document().documentID);
 
     return ZipStream([
-      RxFirestore()
-          .set(Ref.document(Paths.messagePath(key)), {"owner": "$uid"}),
+      RxFirestore().set(Ref.document(Paths.messagePath(key)),
+          UserThread(invitedBy: uid).toJson()),
+      RxFirestore().set(Ref.document(Paths.messagePathByUid(otherUser.id, key)),
+          UserThread(invitedBy: otherUser.id).toJson()),
       RxFirestore().set(
-          Ref.document(Paths.messagePathByUid(otherUser.id, key)),
-          {"owner": "${otherUser.id}"}),
-      RxFirestore().set(Ref.document(Paths.chatPath(key)),
-          Thread(name: name, type: "oneToOne", owner: uid).toJson())
+          Ref.document(Paths.chatPath(key)),
+          Thread(name: name, type: 1, creator: uid, idList: [otherUser.id, uid])
+              .toJson())
     ], (List<void> b) {
       Fimber.e("ZipStream ${b.runtimeType}");
       return b.length.toString();

@@ -12,13 +12,12 @@ class CurrentChatViewModel extends BaseViewModel {
     getActiveChatList();
   }
 
-  List<ThreadKey> _currentChatList;
+  List<Thread> _currentChatList;
 
-  List<ThreadKey> get currentChatList => _currentChatList;
+  List<Thread> get currentChatList => _currentChatList;
 
   getActiveChatList() {
-    FireStream.shared().getAllActiveChatUserList().listen(
-        (List<ThreadKey> list) {
+    FireStream.shared().getAllActiveChatUserList().listen((List<Thread> list) {
       print(list.length);
       _currentChatList = list;
       notifyListeners();

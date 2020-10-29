@@ -14,7 +14,7 @@ class User {
   String pictureUrl;
   int lastOnline;
   Map<String, dynamic> meta = Map();
-  List<UserThreadKey> userThread;
+  List<UserThread> userThread;
 
   User({@required this.name});
 
@@ -30,7 +30,7 @@ class User {
     this.meta.addAll(meta);
   }
 
-  _setUserThread(List<UserThreadKey> userThread) {
+  _setUserThread(List<UserThread> userThread) {
     this.userThread = userThread;
   }
 
@@ -45,7 +45,7 @@ class User {
     user._setUserThread(json.containsKey(Keys.chats)
         ? (json[Keys.chats] as LinkedHashMap<dynamic, dynamic>)
             .entries
-            .map((e) => UserThreadKey.fromJson(e.key, e.value))
+            .map((e) => UserThread.fromListData(ListData(e.key, e.value)))
             .toList()
         : []);
 
@@ -66,7 +66,7 @@ class User {
     user._setUserThread(listData.data.containsKey(Keys.chats)
         ? (listData.data[Keys.chats] as LinkedHashMap<dynamic, dynamic>)
             .entries
-            .map((e) => UserThreadKey.fromJson(e.key, e.value))
+            .map((e) => UserThread.fromListData(ListData(e.key, e.value)))
             .toList()
         : []);
 

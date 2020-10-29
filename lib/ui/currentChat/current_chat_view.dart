@@ -99,13 +99,13 @@ class _CurrentChatViewState extends State<CurrentChatView>
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Text(
-                                      model.currentChatList[indext].thread.name,
+                                      model.currentChatList[indext].meta.name,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: Theme.of(context).textTheme.button,
                                     ),
                                     Text(
-                                      model.currentChatList[indext].thread.type,
+                                      model.currentChatList[indext].meta.type.toString(),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyText2
@@ -124,7 +124,7 @@ class _CurrentChatViewState extends State<CurrentChatView>
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 26),
                                   child: Text(
-                                    model.currentChatList[indext].key,
+                                    model.currentChatList[indext].id,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: Theme.of(context).textTheme.button,

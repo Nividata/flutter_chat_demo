@@ -30,23 +30,23 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
   }
 
   @override
-  Stream<List<ThreadKey>> getAllActiveChatUserList(Path path) {
+  Stream<List<Thread>> getAllActiveChatUserList(Path path) {
     Query query = Ref.get(path).orderByKey();
     return getUserMessageThreadList(Paths.messagesPath())
         .expand((element) => element)
         .flatMap((value) => RXRealtime()
-                .get(query.equalTo(value.key))
+                .get(query.equalTo(value.id))
                 .parseToListOfListData()
                 .map((event) {
-              print(ThreadKey.fromJson(event.id, event.data).toJson());
-              return ThreadKey.fromJson(event.id, event.data);
+              print(Thread.fromListData(event).toJson());
+              return Thread.fromListData(event);
             }))
         .toList()
         .asStream();
   }
 
   @override
-  Stream<List<UserThreadKey>> getUserMessageThreadList(Path path) {
+  Stream<List<UserThread>> getUserMessageThreadList(Path path) {
     print(path.toString());
     return RXRealtime()
         .get(Ref.get(path))
@@ -56,11 +56,8 @@ class RealtimeCoreHandler extends FirebaseCoreHandler {
         })
         .parseToListOfListData()
         .map((event) {
-          print(
-              UserThreadKey(key: event.id, msg: UserThread.fromJson(event.data))
-                  .toJson());
-          return UserThreadKey(
-              key: event.id, msg: UserThread.fromJson(event.data));
+          print(UserThread.fromListData(event).toJson());
+          return UserThread.fromListData(event);
         })
         .toList()
         .asStream();

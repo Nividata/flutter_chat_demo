@@ -38,16 +38,27 @@ class TestViewModel extends BaseViewModel {
 
   SharedPreferencesService _spPreferences = locator<SharedPreferencesService>();
   AuthenticationService _authenticationService =
-  locator<AuthenticationService>();
+      locator<AuthenticationService>();
 
   TestViewModel() {
     // createUserAccount(userDate);
-    getAllUserList();
-    // getActiveChatList();
+    // getAllUserList();
+    getActiveChatList();
     // createUserAccount(userDate);
   }
 
-  getChatMessageList(ThreadKey _threads) {
+  sendNewMessage(Thread _threads) {
+    FireStream.shared()
+        .sendMessage(
+            _threads, Message(msgType: "text", time: "11:50", text: "hi"))
+        .listen((Message message) {
+      print(message.toJson());
+    }, onError: (e) {
+      print(e);
+    });
+  }
+
+  getChatMessageList(Thread _threads) {
     FireStream.shared().listenOnChat(_threads).listen((Message message) {
       Fimber.e("${message?.toJson()}");
     }, onError: (e) {
@@ -57,8 +68,7 @@ class TestViewModel extends BaseViewModel {
 
   createThreadByUser(User userKey) {
     FireStream.shared().createThreadByUser(userKey).listen((event) {
-      getChatMessageList(event);
-      print("onChatSelect ${event.toJson()}");
+      // sendNewMessage(event);
     }, onError: (e) {
       print(e);
     });
@@ -67,16 +77,17 @@ class TestViewModel extends BaseViewModel {
   getAllUserList() {
     FireStream.shared().getAllUserList().listen((List<User> list) {
       print("${list.length}");
-      // createThreadByUser(list[0]);
+      createThreadByUser(list[0]);
     }, onError: (e) {
       print(e);
     });
   }
 
   getActiveChatList() {
-    FireStream.shared()
-        .getAllActiveChatUserList()
-        .listen((List<ThreadKey> list) {}, onError: (e) {
+    FireStream.shared().getAllActiveChatUserList().listen(
+        (List<Thread> list) {
+      print(list.length);
+    }, onError: (e) {
       print(e);
     });
   }
@@ -84,11 +95,10 @@ class TestViewModel extends BaseViewModel {
   createUserAccount(List userDate) {
     _authenticationService
         .logout()
-        .flatMap((value) =>
-        _authenticationService
-            .sendOtp(userDate[0])
-            .transform(
-            FlatMapStreamTransformer((Tuple2<String, dynamic> tuple2) {
+        .flatMap((value) => _authenticationService
+                .sendOtp(userDate[0])
+                .transform(
+                    FlatMapStreamTransformer((Tuple2<String, dynamic> tuple2) {
               if (tuple2.item1 == "Auto_verify") {
                 return _authenticationService
                     .autoVerify(tuple2.item2 as AuthCredential);

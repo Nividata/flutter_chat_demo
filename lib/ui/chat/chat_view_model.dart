@@ -12,7 +12,7 @@ class ChatViewModel extends BaseViewModel {
   final BehaviorSubject _sendMessageController = BehaviorSubject<String>();
 
   Function(String) get newMessage => _sendMessageController.sink.add;
-  ThreadKey _threads;
+  Thread _threads;
 
   ChatViewModel(this._threads) {
     getChatMessageList();

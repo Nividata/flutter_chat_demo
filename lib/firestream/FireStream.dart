@@ -47,26 +47,26 @@ class FireStream {
         .getAllUserList(Paths.usersPath(), firebaseUser.uid);
   }
 
-  Stream<List<ThreadKey>> getAllActiveChatUserList() {
+  Stream<List<Thread>> getAllActiveChatUserList() {
     return getFirebaseService()
         .core
         .getAllActiveChatUserList(Paths.chatsPath());
   }
 
-  Stream<ThreadKey> createThreadByUser(User otherUser) {
+  Stream<Thread> createThreadByUser(User otherUser) {
     return getFirebaseService()
         .chat
         .createThreadByUser(otherUser, firebaseUser.uid);
   }
 
-  Stream<Message> listenOnChat(ThreadKey threads) {
+  Stream<Message> listenOnChat(Thread threads) {
     return getFirebaseService().chat.listenOnChat(
-        Paths.chatMessagesPath(threads.key), threads, firebaseUser.uid);
+        Paths.chatMessagesPath(threads.id), threads, firebaseUser.uid);
   }
 
-  Stream<Message> sendMessage(ThreadKey threads, Message message) {
+  Stream<Message> sendMessage(Thread threads, Message message) {
     return getFirebaseService().chat.sendMessage(
-        Paths.chatMessagesPath(threads.key),
+        Paths.chatMessagesPath(threads.id),
         threads,
         message,
         firebaseUser.uid);

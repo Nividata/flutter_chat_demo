@@ -84,6 +84,6 @@ class Router1 extends RouterBase {
 
 /// ChatView arguments holder class
 class ChatViewArguments {
-  final ThreadKey threads;
+  final Thread threads;
   ChatViewArguments({@required this.threads});
 }
